@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from app.api import matches
 
 app = FastAPI(title="CS Demo Dashboard")
 
@@ -11,6 +12,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(matches.router)
 
 @app.get("/health")
 def health():

@@ -37,6 +37,7 @@ __pycache__/
 # Données : ne jamais commiter les démos (très lourdes)
 data/demos/*
 !data/demos/.gitkeep
+data/matches/
 
 # Secrets
 .env
