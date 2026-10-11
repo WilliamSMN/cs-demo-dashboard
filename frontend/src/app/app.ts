@@ -4,7 +4,10 @@ import { catchError, map, of } from 'rxjs';
 
 import { MatchesApi } from './services/matches-api';
 
+import { MatchList } from './components/match-list/match-list'
+
 @Component({
+  imports: [MatchList],
   selector: 'app-root',
   templateUrl: './app.html',
   styleUrl: './app.scss',
@@ -15,8 +18,8 @@ export class App {
   readonly backendStatus = toSignal(
     this.api.health().pipe(
       map((response) => response.status),
-      catchError(() => of('injoignable')),
+      catchError(() => of('Unreachable')),
     ),
-    { initialValue: 'vérification...' },
+    { initialValue: 'Verification...' },
   );
 }
