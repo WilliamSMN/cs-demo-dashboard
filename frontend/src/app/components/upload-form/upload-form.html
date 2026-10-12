@@ -1,0 +1,10 @@
+<div>Upload your file here: 
+    <input type="file" (change)="onFileChosen($event)"/>
+</div>
+@let s = uploadState();
+@switch (s.kind) {
+    @case ('idle') { }
+    @case ('uploading') { <p>File is uploading...</p> }
+    @case ('error') { <p>{{ s.message }}</p> }
+    @case ('uploaded') { <p>Match {{ s.match.filename }} on {{ s.match.map_name }} has been uploaded!</p> }
+}

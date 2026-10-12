@@ -1,5 +1,5 @@
 <p>match-list :</p>
-@let s = state();
+@let s = this.store.matchState();
 @switch (s.kind) {
     @case ('loading') { <p>Loading...</p> }
     @case ('error') { <p>Error!</p> }
