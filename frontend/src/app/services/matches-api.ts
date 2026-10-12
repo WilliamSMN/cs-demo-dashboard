@@ -18,6 +18,21 @@ export interface MatchMeta {
   error: string | null;
 }
 
+export interface Player {
+  steamid: string;
+  name: string;
+  kills: number;
+  deaths: number;
+  assists: number;
+  adr: number;
+  hs_pct: number;
+}
+
+export interface MatchStats {
+  players: Player[];
+  unattributed_deaths: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class MatchesApi {
   private readonly http = inject(HttpClient);
@@ -34,5 +49,9 @@ export class MatchesApi {
     const body = new FormData();
     body.append('file', file);
     return this.http.post<MatchMeta>(`${API_URL}/matches`, body);
+  }
+
+  getStats(id: string): Observable<MatchStats> {
+    return this.http.get<MatchStats>(`${API_URL}/matches/${id}/stats`);
   }
 }
