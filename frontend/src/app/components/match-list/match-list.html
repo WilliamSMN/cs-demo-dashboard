@@ -12,7 +12,11 @@
       @for (match of s.matches; track match.id) {
         @switch (match.status) {
           @case ('processing') {
-            <li>Match {{ match.filename ?? 'Unnamed demo' }} is currently being processed.</li>
+            <li>
+              Match
+              <a [routerLink]="['/matches', match.id]">{{ match.filename ?? 'Unnamed demo' }}</a> is
+              currently being processed.
+            </li>
           }
           @case ('ready') {
             <li>
