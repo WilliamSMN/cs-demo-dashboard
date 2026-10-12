@@ -29,4 +29,10 @@ export class MatchesApi {
   list(): Observable<MatchMeta[]>{
     return this.http.get<MatchMeta[]>(`${API_URL}/matches`);
   }
+
+  upload(file: File): Observable<MatchMeta> {
+    const body = new FormData();
+    body.append('file', file);
+    return this.http.post<MatchMeta>(`${API_URL}/matches`, body);
+  }
 }
