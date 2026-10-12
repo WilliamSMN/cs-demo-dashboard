@@ -1,14 +1,12 @@
 import { Component, inject } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { catchError, map, of } from 'rxjs';
 
 import { MatchesApi } from './services/matches-api';
 
-import { MatchList } from './components/match-list/match-list'
-import { UploadForm } from './components/upload-form/upload-form'
-
 @Component({
-  imports: [MatchList, UploadForm],
+  imports: [RouterOutlet],
   selector: 'app-root',
   templateUrl: './app.html',
   styleUrl: './app.scss',

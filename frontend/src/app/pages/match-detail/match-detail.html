@@ -1,0 +1,22 @@
+@let v = view();
+@switch (v.kind) {
+  @case ('loading') {
+    <p>Loading...</p>
+  }
+  @case ('error') {
+    <p>Error</p>
+  }
+  @case ('notFound') {
+    <p>Match not found</p>
+  }
+  @case ('found') {
+    <h1>Match {{ v.match.filename }} on {{ v.match.map_name ?? 'unknown' }}</h1>
+    <p>Status: {{ v.match.status }}</p>
+    <p>Tickrate: {{ v.match.tickrate ?? 'unknown' }}</p>
+    <p>Total number of rounds : {{ v.match.rounds ?? 'unknown' }}</p>
+    @if (v.match.error; as error) {
+      <p>Could not load the match.</p>
+    }
+  }
+}
+<a routerLink="/home">Back</a>

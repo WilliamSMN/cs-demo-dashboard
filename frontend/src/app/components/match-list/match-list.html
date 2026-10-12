@@ -1,19 +1,35 @@
 <p>match-list :</p>
 @let s = this.store.matchState();
 @switch (s.kind) {
-    @case ('loading') { <p>Loading...</p> }
-    @case ('error') { <p>Error!</p> }
-    @case ('ready') {
-        <ul>
-            @for (match of s.matches; track match.id) {
-                @switch (match.status) {
-                    @case ('processing') { <li>Match {{ match.filename ?? 'Unnamed demo' }} is currently being processed.</li> }
-                    @case ('ready') { <li>Match on {{ match.map_name }} from {{ match.filename }} is ready.</li> }
-                    @case ('failed') { <li>Match {{ match.filename ?? 'Unnamed demo' }} could not be processed : {{ match.error }}.</li> }
-                }
-            } @empty {
-                <li>There are no matches.</li>
-            }
-        </ul>
-    }
+  @case ('loading') {
+    <p>Loading...</p>
+  }
+  @case ('error') {
+    <p>Error!</p>
+  }
+  @case ('ready') {
+    <ul>
+      @for (match of s.matches; track match.id) {
+        @switch (match.status) {
+          @case ('processing') {
+            <li>Match {{ match.filename ?? 'Unnamed demo' }} is currently being processed.</li>
+          }
+          @case ('ready') {
+            <li>
+              Match on {{ match.map_name }} from
+              <a [routerLink]="['/matches', match.id]">{{ match.filename }}</a> is ready.
+            </li>
+          }
+          @case ('failed') {
+            <li>
+              Match {{ match.filename ?? 'Unnamed demo' }} could not be processed :
+              {{ match.error }}.
+            </li>
+          }
+        }
+      } @empty {
+        <li>There are no matches.</li>
+      }
+    </ul>
+  }
 }
