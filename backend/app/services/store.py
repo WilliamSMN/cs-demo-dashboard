@@ -27,9 +27,10 @@ def write_meta(match_id: str, meta: dict) -> None:
     path.write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
-def create_meta(match_id: str, filename: str | None) -> dict:
+def create_meta(match_id: str, filename: str | None, owner: str) -> dict:
     meta = {
         "id": match_id,
+        "owner": owner,
         "filename": filename,
         "status": "processing",
         "map_name": None,
@@ -48,9 +49,9 @@ def update_meta(match_id: str, **fields) -> dict:
     return meta
 
 
-def list_matches() -> list[dict]:
+def list_matches(owner: str) -> list[dict]:
     root = settings.data_dir / "matches"
     if not root.exists():
         return []
     metas = [read_meta(folder.name) for folder in sorted(root.iterdir()) if folder.is_dir()]
-    return [meta for meta in metas if meta]
+    return [meta for meta in metas if meta and meta.get("owner") == owner]
