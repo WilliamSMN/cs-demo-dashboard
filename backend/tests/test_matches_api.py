@@ -60,8 +60,8 @@ def test_stats_serializes_steamid_as_string_and_reports_unattributed_deaths():
         folder / "rounds.parquet"
     )
     pl.DataFrame(
-        {"steamid": [BIG_STEAMID], "name": ["WilloKage"]},
-        schema={"steamid": pl.UInt64, "name": pl.String},
+        {"steamid": [BIG_STEAMID], "name": ["WilloKage"], "team": [1]},
+        schema={"steamid": pl.UInt64, "name": pl.String, "team": pl.Int64},
     ).write_parquet(folder / "players.parquet")
 
     response = client.get(f"/matches/{match_id}/stats")
@@ -70,4 +70,5 @@ def test_stats_serializes_steamid_as_string_and_reports_unattributed_deaths():
     body = response.json()
     assert body["players"][0]["steamid"] == str(BIG_STEAMID)
     assert body["players"][0]["kills"] == 1
+    assert body["players"][0]["team"] == 1
     assert body["unattributed_deaths"] == 1

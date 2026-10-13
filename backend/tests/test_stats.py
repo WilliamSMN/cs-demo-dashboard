@@ -37,8 +37,8 @@ def build_stats():
     )
     rounds = pl.DataFrame({"round_num": [1, 2]}, schema={"round_num": pl.UInt32})
     players = pl.DataFrame(
-        {"steamid": [A, B, X], "name": ["A", "B", "X"]},
-        schema={"steamid": pl.Int64, "name": pl.String},
+        {"steamid": [A, B, X], "name": ["A", "B", "X"], "team": [0, 0, 1]},
+        schema={"steamid": pl.Int64, "name": pl.String, "team": pl.Int64},
     )
     return compute_player_stats(kills, damages, rounds, players)
 
@@ -69,8 +69,8 @@ def test_kill_with_unidentified_victim_is_counted():
     damages = pl.DataFrame([], schema=DAMAGE_SCHEMA)
     rounds = pl.DataFrame({"round_num": [1]}, schema={"round_num": pl.UInt32})
     players = pl.DataFrame(
-        {"steamid": [A, X], "name": ["A", "X"]},
-        schema={"steamid": pl.Int64, "name": pl.String},
+        {"steamid": [A, X], "name": ["A", "X"], "team": [0, 1]},
+        schema={"steamid": pl.Int64, "name": pl.String, "team": pl.Int64},
     )
     stats = compute_player_stats(kills, damages, rounds, players)
     assert row(stats, X)["kills"] == 1
