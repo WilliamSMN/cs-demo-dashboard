@@ -18,7 +18,7 @@ export interface MatchMeta {
   error: string | null;
 }
 
-export interface Player {
+export interface PlayerStats {
   steamid: string;
   name: string;
   kills: number;
@@ -28,8 +28,8 @@ export interface Player {
   hs_pct: number;
 }
 
-export interface MatchStats {
-  players: Player[];
+export interface StatsResponse {
+  players: PlayerStats[];
   unattributed_deaths: number;
 }
 
@@ -51,7 +51,7 @@ export class MatchesApi {
     return this.http.post<MatchMeta>(`${API_URL}/matches`, body);
   }
 
-  getStats(id: string): Observable<MatchStats> {
-    return this.http.get<MatchStats>(`${API_URL}/matches/${id}/stats`);
+  getStats(matchId: string): Observable<StatsResponse> {
+    return this.http.get<StatsResponse>(`${API_URL}/matches/${matchId}/stats`);
   }
 }

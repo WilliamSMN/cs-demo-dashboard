@@ -1,0 +1,31 @@
+@if (stats.hasValue()) {
+  <table>
+    <thead>
+      <tr>
+        <th>Player</th>
+        <th (click)="sortKey.set('kills')">K</th>
+        <th (click)="sortKey.set('deaths')">D</th>
+        <th (click)="sortKey.set('assists')">A</th>
+        <th (click)="sortKey.set('adr')">ADR</th>
+        <th (click)="sortKey.set('hs_pct')">% HS</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (player of sortedPlayers(); track player.steamid) {
+        <tr>
+          <td>{{ player.name }}</td>
+          <td>{{ player.kills }}</td>
+          <td>{{ player.deaths }}</td>
+          <td>{{ player.assists }}</td>
+          <td>{{ player.adr | number: '1.0-1' }}</td>
+          <td>{{ player.hs_pct | percent: '1.0-0' }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+} @else if (stats.error()) {
+  <p>{{ errorMessage() }}</p>
+  <button (click)="stats.reload()">Retry</button>
+} @else if (stats.isLoading()) {
+  <div>Loading match info...</div>
+}
