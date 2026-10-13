@@ -1,8 +1,11 @@
-from fastapi import APIRouter, HTTPException, Request
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, Request
 from fastapi.responses import RedirectResponse
 
 from app.config import settings
 from app.services import steam_auth
+from app.api.deps import current_steamid
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -30,10 +33,7 @@ async def steam_callback(request: Request):
 
 
 @router.get("/me")
-def me(request: Request):
-    steamid = request.session.get("steamid")
-    if not steamid:
-        raise HTTPException(status_code=401, detail="Not signed in")
+def me(steamid: Annotated[str, Depends(current_steamid)]):
     return {"steamid": steamid}
 
 
