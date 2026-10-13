@@ -17,6 +17,9 @@
     @if (v.match.error; as error) {
       <p>Could not load the match.</p>
     }
+    @if (v.match.status === 'ready') {
+      <app-match-stats [matchId]="v.match.id" />
+    }
   }
 }
 <a routerLink="/home">Back</a>

@@ -1,8 +1,8 @@
 import { Component, input, inject, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MatchesStore } from '../../services/matches-store';
-
 import { MatchMeta } from '../../services/matches-api';
+import { MatchStats } from '../../components/match-stats/match-stats';
 
 type MatchView =
   | { kind: 'loading' }
@@ -11,7 +11,7 @@ type MatchView =
   | { kind: 'found'; match: MatchMeta };
 
 @Component({
-  imports: [RouterLink],
+  imports: [RouterLink, MatchStats],
   selector: 'app-match-detail',
   styleUrl: './match-detail.scss',
   templateUrl: './match-detail.html',
