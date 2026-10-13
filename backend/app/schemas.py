@@ -16,6 +16,7 @@ class MatchMeta(BaseModel):
 class PlayerStats(BaseModel):
     steamid: str  # chaîne : un SteamID64 dépasse la précision des nombres JavaScript
     name: str
+    team: int | None = None
     kills: int
     deaths: int
     assists: int

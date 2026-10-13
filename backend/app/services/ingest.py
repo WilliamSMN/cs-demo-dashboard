@@ -20,7 +20,28 @@ def ingest_demo(match_id: str, demo_path: Path) -> None:
         dem.kills.write_parquet(folder / "kills.parquet")
         dem.damages.write_parquet(folder / "damages.parquet")
         dem.rounds.write_parquet(folder / "rounds.parquet")
-        players = dem.ticks.group_by("steamid").agg(pl.col("name").last())
+        players = (
+            dem.ticks
+            .filter(
+                pl.col("steamid").is_not_null()
+                & pl.col("side").is_not_null()
+            )
+            .sort("tick")
+            .group_by("steamid")
+            .agg(
+                pl.col("name").drop_nulls().last().alias("name"),
+                pl.col("side").first().alias("starting_side"),
+            )
+            .with_columns(
+                pl.when(pl.col("starting_side").str.to_lowercase() == "ct")
+                .then(pl.lit(0))
+                .when(pl.col("starting_side").str.to_lowercase() == "t")
+                .then(pl.lit(1))
+                .otherwise(pl.lit(None, dtype=pl.Int64))
+                .alias("team")
+            )
+            .drop("starting_side")
+        )
         players.write_parquet(folder / "players.parquet")
 
         store.update_meta(

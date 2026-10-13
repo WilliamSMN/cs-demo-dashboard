@@ -63,6 +63,6 @@ def compute_player_stats(
             .otherwise(0.0)
             .alias("hs_pct"),
         )
-        .select("steamid", "name", "kills", "deaths", "assists", "adr", "hs_pct")
+        .select("steamid", "name", "team", "kills", "deaths", "assists", "adr", "hs_pct")
         .sort("kills", descending=True)
     )
