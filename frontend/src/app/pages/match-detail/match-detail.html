@@ -1,25 +1,86 @@
-@let v = view();
-@switch (v.kind) {
-  @case ('loading') {
-    <p>Loading...</p>
-  }
-  @case ('error') {
-    <p>Error</p>
-  }
-  @case ('notFound') {
-    <p>Match not found</p>
-  }
-  @case ('found') {
-    <h1>Match {{ v.match.filename }} on {{ v.match.map_name ?? 'unknown' }}</h1>
-    <p>Status: {{ v.match.status }}</p>
-    <p>Tickrate: {{ v.match.tickrate ?? 'unknown' }}</p>
-    <p>Total number of rounds : {{ v.match.rounds ?? 'unknown' }}</p>
-    @if (v.match.error; as error) {
-      <p>Could not load the match.</p>
+<section class="match-detail-page">
+  @let v = view();
+
+  @switch (v.kind) {
+    @case ('loading') {
+      <div class="status-card" role="status">
+        <span class="loading-indicator"></span>
+        <div>
+          <strong>Loading match details</strong>
+          <p>Please wait while we retrieve the match data.</p>
+        </div>
+      </div>
     }
-    @if (v.match.status === 'ready') {
-      <app-match-stats [matchId]="v.match.id" />
+
+    @case ('error') {
+      <div class="status-card error" role="alert">
+        <span class="message-symbol">!</span>
+        <div>
+          <strong>Failed to load match</strong>
+          <p>An unexpected error occurred while fetching match data.</p>
+        </div>
+      </div>
+    }
+
+    @case ('notFound') {
+      <div class="status-card error" role="alert">
+        <span class="message-symbol">!</span>
+        <div>
+          <strong>Match not found</strong>
+          <p>The requested match could not be found or has been removed.</p>
+        </div>
+      </div>
+    }
+
+    @case ('found') {
+      <header class="page-heading">
+        <div>
+          <div class="eyebrow"><span class="status-dot"></span> MATCH OVERVIEW</div>
+          <h1>{{ v.match.filename }}<span class="heading-period">.</span></h1>
+          <p class="page-description">
+            Map: <strong>{{ v.match.map_name ?? 'Unknown map' }}</strong> &bull; Tickrate:
+            <strong>{{ v.match.tickrate ?? 'Unknown' }}</strong> &bull; Rounds:
+            <strong>{{ v.match.rounds ?? 'Unknown' }}</strong>
+          </p>
+        </div>
+
+        <div class="heading-actions">
+          <div class="heading-tag">
+            STATUS <span>{{ v.match.status | uppercase }}</span>
+          </div>
+          <a class="back-button" routerLink="/home">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M19 12H5" />
+              <path d="m12 19-7-7 7-7" />
+            </svg>
+            Back
+          </a>
+        </div>
+      </header>
+
+      @if (v.match.error; as error) {
+        <div class="status-card error" role="alert">
+          <span class="message-symbol">!</span>
+          <div>
+            <strong>Processing error</strong>
+            <p>Could not fully process this match demo.</p>
+          </div>
+        </div>
+      }
+
+      @if (v.match.status === 'ready') {
+        <section class="stats-section">
+          <app-match-stats [matchId]="v.match.id" />
+        </section>
+      }
     }
   }
-}
-<a routerLink="/home">Back</a>
+</section>

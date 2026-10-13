@@ -21,6 +21,7 @@ export interface MatchMeta {
 export interface PlayerStats {
   steamid: string;
   name: string;
+  team: number | null;
   kills: number;
   deaths: number;
   assists: number;

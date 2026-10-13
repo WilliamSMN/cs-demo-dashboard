@@ -1,31 +1,92 @@
 @if (stats.hasValue()) {
-  <table>
-    <thead>
-      <tr>
-        <th>Player</th>
-        <th (click)="sortKey.set('kills')">K</th>
-        <th (click)="sortKey.set('deaths')">D</th>
-        <th (click)="sortKey.set('assists')">A</th>
-        <th (click)="sortKey.set('adr')">ADR</th>
-        <th (click)="sortKey.set('hs_pct')">% HS</th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (player of sortedPlayers(); track player.steamid) {
-        <tr>
-          <td>{{ player.name }}</td>
-          <td>{{ player.kills }}</td>
-          <td>{{ player.deaths }}</td>
-          <td>{{ player.assists }}</td>
-          <td>{{ player.adr | number: '1.0-1' }}</td>
-          <td>{{ player.hs_pct | percent: '1.0-0' }}</td>
-        </tr>
-      }
-    </tbody>
-  </table>
+  <section class="stats-container">
+    @for (team of teamGroups(); track team.name) {
+      <section class="team-card">
+        <div class="team-heading">
+          <h2>{{ team.name }}</h2>
+          <span class="player-count"> {{ team.players.length }} players </span>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Player</th>
+                <th scope="col">
+                  <button
+                    type="button"
+                    (click)="sortKey.set('kills')"
+                    [class.active]="sortKey() === 'kills'"
+                    [attr.aria-pressed]="sortKey() === 'kills'"
+                  >
+                    K
+                  </button>
+                </th>
+                <th scope="col">
+                  <button
+                    type="button"
+                    (click)="sortKey.set('deaths')"
+                    [class.active]="sortKey() === 'deaths'"
+                    [attr.aria-pressed]="sortKey() === 'deaths'"
+                  >
+                    D
+                  </button>
+                </th>
+                <th scope="col">
+                  <button
+                    type="button"
+                    (click)="sortKey.set('assists')"
+                    [class.active]="sortKey() === 'assists'"
+                    [attr.aria-pressed]="sortKey() === 'assists'"
+                  >
+                    A
+                  </button>
+                </th>
+                <th scope="col">
+                  <button
+                    type="button"
+                    (click)="sortKey.set('adr')"
+                    [class.active]="sortKey() === 'adr'"
+                    [attr.aria-pressed]="sortKey() === 'adr'"
+                  >
+                    ADR
+                  </button>
+                </th>
+                <th scope="col">
+                  <button
+                    type="button"
+                    (click)="sortKey.set('hs_pct')"
+                    [class.active]="sortKey() === 'hs_pct'"
+                    [attr.aria-pressed]="sortKey() === 'hs_pct'"
+                  >
+                    % HS
+                  </button>
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              @for (player of team.players; track player.steamid) {
+                <tr>
+                  <td class="player-name">{{ player.name }}</td>
+                  <td>{{ player.kills }}</td>
+                  <td>{{ player.deaths }}</td>
+                  <td>{{ player.assists }}</td>
+                  <td>{{ player.adr | number: '1.0-1' }}</td>
+                  <td>{{ player.hs_pct | percent: '1.0-0' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+    } @empty {
+      <p class="empty-state">No players are available for this game.</p>
+    }
+  </section>
 } @else if (stats.error()) {
   <p>{{ errorMessage() }}</p>
-  <button (click)="stats.reload()">Retry</button>
+  <button type="button" (click)="stats.reload()">Try again</button>
 } @else if (stats.isLoading()) {
-  <div>Loading match info...</div>
+  <div class="loading-state">Loading statistics...</div>
 }

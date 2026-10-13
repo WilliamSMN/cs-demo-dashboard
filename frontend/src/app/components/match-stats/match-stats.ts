@@ -1,7 +1,7 @@
 import { Component, input, signal, computed } from '@angular/core';
 import { DecimalPipe, PercentPipe } from '@angular/common';
 import { httpResource } from '@angular/common/http';
-import { StatsResponse } from '../../services/matches-api';
+import { StatsResponse, PlayerStats } from '../../services/matches-api';
 import { describeHttpError } from '../../services/http-errors';
 import { API_URL } from '../../config';
 
@@ -25,6 +25,26 @@ export class MatchStats {
     const players = this.stats.value()?.players ?? [];
     return [...players].sort((a, b) => b[key] - a[key]); // descending
   });
+
+  protected readonly teamGroups = computed(() => {
+    const groups = new Map<number | null, PlayerStats[]>();
+
+    for (const player of this.sortedPlayers()) {
+      const team = player.team ?? null;
+      const teamPlayers = groups.get(team) ?? [];
+
+      teamPlayers.push(player);
+      groups.set(team, teamPlayers);
+    }
+
+    return [...groups.entries()]
+      .map(([team, players]) => ({
+        name: team === 0 ? 'Team 1' : team === 1 ? 'Team 2' : 'Unknown team assignment',
+        players,
+      }))
+      .sort((a, b) => a.name.localeCompare(b.name));
+  });
+
   protected readonly errorMessage = computed(() => {
     const err = this.stats.error();
     const cause = err instanceof Error && err.cause ? err.cause : err;

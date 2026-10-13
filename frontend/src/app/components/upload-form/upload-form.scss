@@ -1,0 +1,252 @@
+:host {
+  display: block;
+}
+
+.upload-card {
+  padding: 26px;
+  border: 1px solid #263142;
+  border-radius: 14px;
+  background: #101722;
+  box-shadow: 0 12px 32px #00000012;
+}
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.section-icon {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  place-items: center;
+  border: 1px solid #35452b;
+  border-radius: 11px;
+  background: #1b2819;
+  color: #a3e635;
+}
+
+.section-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.section-heading h2 {
+  margin-bottom: 5px;
+  font-size: 16px;
+}
+
+.section-heading p {
+  margin-bottom: 0;
+  color: #8491a6;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.dropzone {
+  position: relative;
+  display: flex;
+  min-height: 220px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 20px;
+  overflow: hidden;
+  border: 1px dashed #405047;
+  border-radius: 11px;
+  background: radial-gradient(ellipse at 50% 0%, #a3e6350a, transparent 65%), #0c121b;
+  cursor: pointer;
+  text-align: center;
+  transition:
+    border-color 180ms ease,
+    background 180ms ease;
+}
+
+.dropzone:hover,
+.dropzone:focus-within {
+  border-color: #a3e635;
+  background: radial-gradient(ellipse at 50% 0%, #a3e63512, transparent 70%), #0e161d;
+}
+
+.file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.upload-icon {
+  display: grid;
+  width: 54px;
+  height: 54px;
+  place-items: center;
+  margin-bottom: 18px;
+  border: 1px solid #34472b;
+  border-radius: 15px;
+  background: #1b2919;
+  color: #a3e635;
+}
+
+.upload-icon svg {
+  width: 27px;
+  height: 27px;
+}
+
+.dropzone-title {
+  margin-bottom: 8px;
+  color: #edf2fa;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.dropzone-description {
+  color: #8491a6;
+  font-size: 12px;
+}
+
+.browse-button {
+  margin-top: 20px;
+  padding: 10px 18px;
+  border: 1px solid #a3e635;
+  border-radius: 7px;
+  background: #a3e635;
+  color: #141b0c;
+  font-size: 12px;
+  font-weight: 800;
+  transition: background 180ms ease;
+}
+
+.dropzone:hover .browse-button {
+  background: #b6f35b;
+}
+
+.upload-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 17px;
+}
+
+.format-label,
+.secure-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #8290a5;
+  font-size: 11px;
+}
+
+.file-extension {
+  padding: 5px 7px;
+  border: 1px solid #2b3747;
+  border-radius: 5px;
+  background: #182130;
+  color: #b9c5d7;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.secure-label svg {
+  width: 15px;
+  height: 15px;
+  color: #8491a6;
+}
+
+.upload-message {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 20px;
+  padding: 15px;
+  border: 1px solid #303b4a;
+  border-radius: 9px;
+  background: #141d29;
+}
+
+.upload-message strong {
+  display: block;
+  margin-bottom: 5px;
+  color: #e8edf5;
+  font-size: 12px;
+}
+
+.upload-message p {
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: #9aa7ba;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.upload-message.error {
+  border-color: #66343a;
+  background: #24161c;
+}
+
+.upload-message.success {
+  border-color: #354b2b;
+  background: #172117;
+}
+
+.message-symbol {
+  display: grid;
+  width: 25px;
+  height: 25px;
+  flex-shrink: 0;
+  place-items: center;
+  border-radius: 50%;
+  background: #253722;
+  color: #a3e635;
+  font-weight: 800;
+}
+
+.error .message-symbol {
+  background: #48252a;
+  color: #ff8e96;
+}
+
+.loading-indicator {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  border: 2px solid #35432e;
+  border-top-color: #a3e635;
+  border-radius: 50%;
+  animation: spin 800ms linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 600px) {
+  .upload-card {
+    padding: 18px;
+  }
+
+  .dropzone {
+    min-height: 200px;
+    padding: 24px 14px;
+  }
+
+  .upload-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading-indicator {
+    animation-duration: 2s;
+  }
+}

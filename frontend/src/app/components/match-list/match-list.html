@@ -1,39 +1,161 @@
-<p>match-list :</p>
-@let s = this.store.matchState();
-@switch (s.kind) {
-  @case ('loading') {
-    <p>Loading...</p>
-  }
-  @case ('error') {
-    <p>Error!</p>
-  }
-  @case ('ready') {
-    <ul>
-      @for (match of s.matches; track match.id) {
-        @switch (match.status) {
-          @case ('processing') {
-            <li>
-              Match
-              <a [routerLink]="['/matches', match.id]">{{ match.filename ?? 'Unnamed demo' }}</a> is
-              currently being processed.
-            </li>
+<section class="match-list-section">
+  <header class="list-heading">
+    <div>
+      <h2>Your matches</h2>
+      <p class="list-description">Browse your uploaded demos and access their reports.</p>
+    </div>
+
+    <div class="list-indicator">
+      <span class="status-dot"></span>
+      Match history
+    </div>
+  </header>
+
+  @let s = this.store.matchState();
+
+  @switch (s.kind) {
+    @case ('loading') {
+      <div class="state-card" role="status">
+        <span class="loading-indicator"></span>
+        <div>
+          <strong>Loading matches</strong>
+          <p>Your match history is being retrieved.</p>
+        </div>
+      </div>
+    }
+
+    @case ('error') {
+      <div class="state-card error-state" role="alert">
+        <span class="state-symbol">!</span>
+        <div>
+          <strong>Unable to load matches</strong>
+          <p>Something went wrong while retrieving your match history.</p>
+        </div>
+      </div>
+    }
+
+    @case ('ready') {
+      @if (s.matches.length > 0) {
+        <div class="match-list">
+          @for (match of s.matches; track match.id) {
+            <article class="match-card">
+              <div class="match-file-icon">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M13 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10z" />
+                  <path d="M13 3v7h7" />
+                  <path d="M8 14h8M8 17h8" />
+                </svg>
+              </div>
+
+              <div class="match-info">
+                @switch (match.status) {
+                  @case ('processing') {
+                    <a class="match-name" [routerLink]="['/matches', match.id]">
+                      {{ match.filename ?? 'Unnamed demo' }}
+                    </a>
+                  }
+
+                  @case ('ready') {
+                    <a class="match-name" [routerLink]="['/matches', match.id]">
+                      {{ match.filename ?? 'Unnamed demo' }}
+                    </a>
+                  }
+
+                  @case ('failed') {
+                    <span class="match-name">
+                      {{ match.filename ?? 'Unnamed demo' }}
+                    </span>
+                  }
+                }
+
+                <div class="match-meta">
+                  <span class="map-indicator"></span>
+                  <span>{{ match.map_name ?? 'Unknown map' }}</span>
+                </div>
+
+                @if (match.status === 'failed' && match.error) {
+                  <p class="match-error">{{ match.error }}</p>
+                }
+              </div>
+
+              <div class="match-status">
+                @switch (match.status) {
+                  @case ('processing') {
+                    <span class="status-badge processing">
+                      <span class="badge-dot"></span>
+                      Processing
+                    </span>
+                  }
+
+                  @case ('ready') {
+                    <span class="status-badge ready">
+                      <span class="badge-dot"></span>
+                      Ready
+                    </span>
+                  }
+
+                  @case ('failed') {
+                    <span class="status-badge failed">
+                      <span class="badge-dot"></span>
+                      Failed
+                    </span>
+                  }
+                }
+              </div>
+
+              @if (match.status !== 'failed') {
+                <a
+                  class="match-action"
+                  [routerLink]="['/matches', match.id]"
+                  [attr.aria-label]="'View ' + (match.filename ?? 'match')"
+                >
+                  View report
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M5 12h14" />
+                    <path d="m13 6 6 6-6 6" />
+                  </svg>
+                </a>
+              }
+            </article>
           }
-          @case ('ready') {
-            <li>
-              Match on {{ match.map_name }} from
-              <a [routerLink]="['/matches', match.id]">{{ match.filename }}</a> is ready.
-            </li>
-          }
-          @case ('failed') {
-            <li>
-              Match {{ match.filename ?? 'Unnamed demo' }} could not be processed :
-              {{ match.error }}.
-            </li>
-          }
-        }
-      } @empty {
-        <li>There are no matches.</li>
+        </div>
+      } @else {
+        <div class="empty-state">
+          <div class="empty-icon">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M13 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10z" />
+              <path d="M13 3v7h7" />
+            </svg>
+          </div>
+
+          <h3>No matches yet</h3>
+          <p>Your match history is empty. Upload a CS2 demo to get started.</p>
+        </div>
       }
-    </ul>
+    }
   }
-}
+</section>

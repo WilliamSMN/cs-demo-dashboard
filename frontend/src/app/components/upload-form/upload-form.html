@@ -1,17 +1,111 @@
-<div>
-  Upload your file here:
-  <input type="file" (change)="onFileChosen($event)" />
-</div>
-@let s = uploadState();
-@switch (s.kind) {
-  @case ('idle') {}
-  @case ('uploading') {
-    <p>File is uploading...</p>
+<section class="upload-card">
+  <div class="section-heading">
+    <div class="section-icon">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.7"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M12 16V4" />
+        <path d="m7 9 5-5 5 5" />
+        <path d="M20 16.5v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2" />
+      </svg>
+    </div>
+
+    <div>
+      <h2>Import a demo</h2>
+      <p>Upload a Counter-Strike 2 match recording to get started.</p>
+    </div>
+  </div>
+
+  <label class="dropzone" for="demo-file">
+    <input id="demo-file" class="file-input" type="file" (change)="onFileChosen($event)" />
+
+    <span class="upload-icon">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.6"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M12 16V4" />
+        <path d="m7 9 5-5 5 5" />
+        <path d="M20 16.5v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2" />
+      </svg>
+    </span>
+
+    <span class="dropzone-title">Choose a demo file</span>
+    <span class="dropzone-description"> Select a .dem file from your computer </span>
+
+    <span class="browse-button">Browse files</span>
+  </label>
+
+  <div class="upload-footer">
+    <span class="format-label">
+      <span class="file-extension">.DEM</span>
+      Counter-Strike 2 demo
+    </span>
+
+    <span class="secure-label">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.7"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <rect x="5" y="10" width="14" height="11" rx="2" />
+        <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+      </svg>
+      Local workspace
+    </span>
+  </div>
+
+  @let s = uploadState();
+
+  @switch (s.kind) {
+    @case ('idle') {}
+
+    @case ('uploading') {
+      <div class="upload-message uploading" role="status">
+        <span class="loading-indicator"></span>
+        <div>
+          <strong>Uploading your demo</strong>
+          <p>Please wait while your file is processed.</p>
+        </div>
+      </div>
+    }
+
+    @case ('error') {
+      <div class="upload-message error" role="alert">
+        <span class="message-symbol">!</span>
+        <div>
+          <strong>Upload failed</strong>
+          <p>{{ s.message }}</p>
+        </div>
+      </div>
+    }
+
+    @case ('uploaded') {
+      <div class="upload-message success" role="status">
+        <span class="message-symbol">✓</span>
+        <div>
+          <strong>Demo uploaded successfully</strong>
+          <p>
+            {{ s.match.filename }} ·
+            {{ s.match.map_name ?? 'Unknown map' }}
+          </p>
+        </div>
+      </div>
+    }
   }
-  @case ('error') {
-    <p>{{ s.message }}</p>
-  }
-  @case ('uploaded') {
-    <p>Match {{ s.match.filename }} on {{ s.match.map_name }} has been uploaded!</p>
-  }
-}
+</section>
