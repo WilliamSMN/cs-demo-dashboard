@@ -3,6 +3,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 
 import { App } from './app';
+import { API_URL } from './config';
 
 describe('App', () => {
   it('affiche le statut du backend', async () => {
@@ -11,9 +12,7 @@ describe('App', () => {
     });
     const fixture = TestBed.createComponent(App);
 
-    TestBed.inject(HttpTestingController)
-      .expectOne('http://127.0.0.1:8000/health')
-      .flush({ status: 'ok' });
+    TestBed.inject(HttpTestingController).expectOne(`${API_URL}//health`).flush({ status: 'ok' });
     await fixture.whenStable();
 
     expect(fixture.nativeElement.textContent).toContain('Backend : ok');

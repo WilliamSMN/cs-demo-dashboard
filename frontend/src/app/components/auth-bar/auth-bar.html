@@ -1,0 +1,33 @@
+<div class="auth-bar">
+  @let s = auth.authState();
+
+  @switch (s.kind) {
+    @case ('signedOut') {
+      <a class="auth-button sign-in" [href]="auth.loginUrl">
+        <span class="auth-icon">↗</span>
+        <span>Sign in with Steam.</span>
+      </a>
+    }
+
+    @case ('loading') {
+      <div class="auth-loading" role="status" aria-live="polite">
+        <span class="loading-spinner" aria-hidden="true"></span>
+        <span>Checking authentication...</span>
+      </div>
+    }
+
+    @case ('error') {
+      <div class="auth-error">
+        <span class="status-dot"></span>
+        <span>Authentication error</span>
+      </div>
+    }
+
+    @case ('signedIn') {
+      <button class="auth-button sign-out" type="button" (click)="auth.logout()">
+        <span class="auth-icon">↪</span>
+        <span>Sign out</span>
+      </button>
+    }
+  }
+</div>
