@@ -1,4 +1,4 @@
-import { Service, inject, signal } from '@angular/core';
+import { Service, inject, signal, computed } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { API_URL } from '../config';
@@ -15,6 +15,8 @@ export class Auth {
   private readonly http = inject(HttpClient);
   readonly authState = signal<AuthState>({ kind: 'signedOut' });
   readonly loginUrl = `${API_URL}/auth/steam/login`;
+
+  readonly isSignedIn = computed(() => this.authState().kind === 'signedIn');
 
   async load(): Promise<void> {
     try {

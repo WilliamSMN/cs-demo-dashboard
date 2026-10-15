@@ -1,0 +1,13 @@
+@let s = auth.authState();
+@if (error() === 'steam') {
+  <span>Steam sign-in failed. Please try again.</span>
+}
+@if (s.kind === 'error') {
+  <span>Backend Unreachable.</span>
+}
+<div class="auth-page">
+  <a class="auth-button sign-in" [href]="auth.loginUrl">
+    <span class="auth-icon">↗</span>
+    <span>Sign in with Steam to upload and analyze your demos.</span>
+  </a>
+</div>

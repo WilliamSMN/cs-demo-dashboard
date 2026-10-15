@@ -1,0 +1,64 @@
+.auth-bar {
+  width: 100%;
+}
+
+.auth-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+
+  width: 100%;
+  min-height: 42px;
+  padding: 0.7rem 0.85rem;
+
+  border: 1px solid #303b4d;
+  border-radius: 8px;
+
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+
+  cursor: pointer;
+  transition:
+    background 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease;
+}
+
+.sign-in {
+  color: #0b0f14;
+  background: #a3e635;
+  border-color: #a3e635;
+
+  &:hover {
+    background: #bef264;
+    border-color: #bef264;
+  }
+}
+
+.auth-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.auth-button:focus-visible {
+  outline: 2px solid #a3e635;
+  outline-offset: 3px;
+}
+
+.auth-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  min-height: calc(100vh - 4rem);
+  padding: 2rem;
+}
+
+.auth-page .auth-button {
+  width: auto;
+  max-width: 420px;
+}
