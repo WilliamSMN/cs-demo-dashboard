@@ -14,16 +14,21 @@ class MatchMeta(BaseModel):
 
 
 class PlayerStats(BaseModel):
-    steamid: str  # chaîne : un SteamID64 dépasse la précision des nombres JavaScript
+    steamid: str
     name: str
     team: int | None = None
     kills: int
     deaths: int
     assists: int
+    damage: int  # Corrigé en 'damage' (cohérent avec ton code précédent)
     adr: float
     hs_pct: float
 
+class TeamStats(BaseModel):
+    name: str        # Ex: "Team 0" (ou le nom réel si disponible)
+    score: int       # Score final de l'équipe
+    players: list[PlayerStats]
 
 class StatsResponse(BaseModel):
-    players: list[PlayerStats]
+    teams: list[TeamStats]
     unattributed_deaths: int

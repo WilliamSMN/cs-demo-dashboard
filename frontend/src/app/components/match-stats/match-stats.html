@@ -3,7 +3,7 @@
     @for (team of teamGroups(); track team.name) {
       <section class="team-card">
         <div class="team-heading">
-          <h2>{{ team.name }}</h2>
+          <h2>{{ team.score }} - {{ team.name }}</h2>
           <span class="player-count"> {{ team.players.length }} players </span>
         </div>
 

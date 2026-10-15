@@ -109,9 +109,13 @@ def test_stats_serializes_steamid_as_string_and_reports_unattributed_deaths(make
             "dmg_health_real": pl.Int64,
         },
     ).write_parquet(folder / "damages.parquet")
-    pl.DataFrame({"round_num": [1]}, schema={"round_num": pl.UInt32}).write_parquet(
-        folder / "rounds.parquet"
-    )
+    
+    # Ajout des scores pour que le dernier round ne plante pas
+    pl.DataFrame(
+        {"round_num": [1], "ct_score": [10], "t_score": [5]},
+        schema={"round_num": pl.UInt32, "ct_score": pl.Int64, "t_score": pl.Int64}
+    ).write_parquet(folder / "rounds.parquet")
+
     pl.DataFrame(
         {"steamid": [BIG_STEAMID], "name": ["WilloKage"], "team": [1]},
         schema={"steamid": pl.UInt64, "name": pl.String, "team": pl.Int64},
@@ -121,7 +125,13 @@ def test_stats_serializes_steamid_as_string_and_reports_unattributed_deaths(make
     
     assert response.status_code == 200
     body = response.json()
-    assert body["players"][0]["steamid"] == str(BIG_STEAMID)
-    assert body["players"][0]["kills"] == 1
-    assert body["players"][0]["team"] == 1
+    
+    # Récupération du joueur à travers le tableau des équipes (Team 2 correspond à team=1)
+    team_1 = next(t for t in body["teams"] if t["name"] == "Team 2")
+    player = team_1["players"][0]
+
+    assert player["steamid"] == str(BIG_STEAMID)
+    assert player["kills"] == 1
+    assert player["team"] == 1
     assert body["unattributed_deaths"] == 1
+    assert team_1["score"] == 5

@@ -35,16 +35,28 @@ def build_stats():
         ],
         schema=DAMAGE_SCHEMA, orient="row",
     )
-    rounds = pl.DataFrame({"round_num": [1, 2]}, schema={"round_num": pl.UInt32})
+    rounds = pl.DataFrame(
+        {
+            "round_num": [1, 2],
+            "ct_score": [0, 1],
+            "t_score": [1, 1],
+        },
+        schema={
+            "round_num": pl.UInt32,
+            "ct_score": pl.Int64,
+            "t_score": pl.Int64,
+        },
+    )
     players = pl.DataFrame(
         {"steamid": [A, B, X], "name": ["A", "B", "X"], "team": [0, 0, 1]},
         schema={"steamid": pl.Int64, "name": pl.String, "team": pl.Int64},
     )
     return compute_player_stats(kills, damages, rounds, players)
 
-
-def row(stats, steamid):
-    return stats.filter(pl.col("steamid") == steamid).row(0, named=True)
+def row(stats_result: dict, steamid: int) -> dict:
+    """Aplatit les joueurs de toutes les équipes pour les tests unitaires."""
+    all_players = [p for team in stats_result["teams"] for p in team["players"]]
+    return next(p for p in all_players if p["steamid"] == str(steamid))
 
 
 def test_counts_and_adr():
@@ -67,7 +79,13 @@ def test_kill_with_unidentified_victim_is_counted():
         schema=KILL_SCHEMA, orient="row",
     )
     damages = pl.DataFrame([], schema=DAMAGE_SCHEMA)
-    rounds = pl.DataFrame({"round_num": [1]}, schema={"round_num": pl.UInt32})
+    
+    # Ajout des colonnes de score requises par le code
+    rounds = pl.DataFrame(
+        {"round_num": [1], "ct_score": [0], "t_score": [0]},
+        schema={"round_num": pl.UInt32, "ct_score": pl.Int64, "t_score": pl.Int64}
+    )
+    
     players = pl.DataFrame(
         {"steamid": [A, X], "name": ["A", "X"], "team": [0, 1]},
         schema={"steamid": pl.Int64, "name": pl.String, "team": pl.Int64},

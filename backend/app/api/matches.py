@@ -76,10 +76,5 @@ def get_stats(match_id: MatchId, owner: Owner):
     rounds = pl.read_parquet(folder / "rounds.parquet")
     players = pl.read_parquet(folder / "players.parquet")
 
-    stats = compute_player_stats(kills, damages, rounds, players).with_columns(
-        pl.col("steamid").cast(pl.String)
-    )
-    return StatsResponse(
-        players=stats.to_dicts(),
-        unattributed_deaths=kills["victim_steamid"].null_count(),
-    )
+    result = compute_player_stats(kills, damages, rounds, players)
+    return StatsResponse(**result)

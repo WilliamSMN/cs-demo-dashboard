@@ -6,15 +6,7 @@ def compute_player_stats(
     damages: pl.DataFrame,
     rounds: pl.DataFrame,
     players: pl.DataFrame,
-) -> pl.DataFrame:
-    """Une ligne par joueur : kills, deaths, assists, adr, hs_pct.
-
-    Les événements dont la victime n'est pas identifiée (camp nul) sont comptés
-    comme des événements adverses : seuls les tirs amis explicitement
-    identifiés (camps connus et identiques) sont écartés.
-    Les morts sans victime identifiée ne peuvent être attribuées à personne,
-    donc deaths est sous-estimé d'autant.
-    """
+) -> dict:
     n_rounds = rounds.height
 
     def is_friendly(attacker_side: str, victim_side: str) -> pl.Expr:
@@ -50,7 +42,8 @@ def compute_player_stats(
     )
 
     counts = ["kills", "headshots", "deaths", "assists", "damage"]
-    return (
+    
+    player_df = (
         players.join(k, on="steamid", how="left")
         .join(d, on="steamid", how="left")
         .join(a, on="steamid", how="left")
@@ -63,6 +56,49 @@ def compute_player_stats(
             .otherwise(0.0)
             .alias("hs_pct"),
         )
-        .select("steamid", "name", "team", "kills", "deaths", "assists", "adr", "hs_pct")
+        .select("steamid", "name", "team", "kills", "deaths", "assists", "damage", "adr", "hs_pct")
         .sort("kills", descending=True)
     )
+
+    # Récupération des scores finaux depuis le dernier round
+    if "winner" in rounds.columns and rounds.height > 0:
+        # On compte les rounds gagnés par CT et par T
+        ct_wins = rounds.filter(pl.col("winner").str.to_uppercase() == "CT").height
+        t_wins = rounds.filter(pl.col("winner").str.to_uppercase() == "T").height
+    else:
+        ct_wins, t_wins = 0, 0
+
+    team_0_score = ct_wins
+    team_1_score = t_wins
+
+    # Transformation en dictionnaires pour le groupement par équipe
+    all_players = player_df.with_columns(pl.col("steamid").cast(pl.String)).to_dicts()
+
+    team_0_players = [p for p in all_players if p.get("team") == 0]
+    team_1_players = [p for p in all_players if p.get("team") == 1]
+    other_players = [p for p in all_players if p.get("team") not in (0, 1)]
+
+    teams = [
+        {
+            "name": "Team 1",  # Ou "Equipe 0" / nom personnalisé
+            "score": team_0_score,
+            "players": team_0_players,
+        },
+        {
+            "name": "Team 2",  # Ou "Equipe 1"
+            "score": team_1_score,
+            "players": team_1_players,
+        }
+    ]
+
+    if other_players:
+        teams.append({
+            "name": "Spectateurs / Indéfinis",
+            "score": 0,
+            "players": other_players,
+        })
+
+    return {
+        "teams": teams,
+        "unattributed_deaths": kills["victim_steamid"].null_count(),
+    }

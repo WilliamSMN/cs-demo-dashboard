@@ -25,12 +25,19 @@ export interface PlayerStats {
   kills: number;
   deaths: number;
   assists: number;
+  damage: number;
   adr: number;
   hs_pct: number;
 }
 
-export interface StatsResponse {
+export interface TeamStats {
+  name: string;
+  score: number;
   players: PlayerStats[];
+}
+
+export interface StatsResponse {
+  teams: TeamStats[];
   unattributed_deaths: number;
 }
 
