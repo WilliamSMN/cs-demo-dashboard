@@ -61,15 +61,26 @@ def compute_player_stats(
     )
 
     # Récupération des scores finaux depuis le dernier round
+    # Calcul correct des scores en tenant compte du changement de côté à la mi-temps (round 12 en CS2)
     if "winner" in rounds.columns and rounds.height > 0:
-        # On compte les rounds gagnés par CT et par T
-        ct_wins = rounds.filter(pl.col("winner").str.to_uppercase() == "CT").height
-        t_wins = rounds.filter(pl.col("winner").str.to_uppercase() == "T").height
+        rounds_evaluated = rounds.with_columns(
+            pl.when(pl.col("round_num") <= 12)
+            .then(
+                # 1ère mi-temps : Team 0 = CT, Team 1 = T
+                pl.when(pl.col("winner").str.to_uppercase() == "CT").then(pl.lit(0))
+                .otherwise(pl.lit(1))
+            )
+            .otherwise(
+                # 2nde mi-temps (inversion) : Team 0 = T, Team 1 = CT
+                pl.when(pl.col("winner").str.to_uppercase() == "T").then(pl.lit(0))
+                .otherwise(pl.lit(1))
+            )
+            .alias("round_winner_team")
+        )
+        team_0_score = rounds_evaluated.filter(pl.col("round_winner_team") == 0).height
+        team_1_score = rounds_evaluated.filter(pl.col("round_winner_team") == 1).height
     else:
-        ct_wins, t_wins = 0, 0
-
-    team_0_score = ct_wins
-    team_1_score = t_wins
+        team_0_score, team_1_score = 0, 0
 
     # Transformation en dictionnaires pour le groupement par équipe
     all_players = player_df.with_columns(pl.col("steamid").cast(pl.String)).to_dicts()

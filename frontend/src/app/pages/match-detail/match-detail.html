@@ -78,7 +78,7 @@
 
       @if (v.match.status === 'ready') {
         <section class="stats-section">
-          <app-match-stats [matchId]="v.match.id" />
+          <app-match-stats [matchId]="v.match.id" [mapName]="v.match.map_name ?? 'Unknown map'" />
         </section>
       }
     }
