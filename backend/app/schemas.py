@@ -32,3 +32,55 @@ class TeamStats(BaseModel):
 class StatsResponse(BaseModel):
     teams: list[TeamStats]
     unattributed_deaths: int
+
+class PlayerTrades(BaseModel):
+    steamid: str
+    name: str
+    team: int | None
+    trade_kills: int
+    traded_deaths: int
+    untraded_deaths: int
+
+class TradeTeam(BaseModel):
+    name: str
+    score: int
+    players: list[PlayerTrades]
+
+class TradesResponse(BaseModel):
+    teams: list[TradeTeam]
+
+class PlayerUtility(BaseModel):
+    steamid: str
+    name: str
+    team: int | None
+    enemies_flashed: int
+    team_flashed: int
+    flash_assists: int
+    he_damage: int
+    molotov_damage: int
+    blind_time: float
+    flashes_thrown: int
+
+class UtilityTeam(BaseModel):
+    name: str
+    score: int
+    players: list[PlayerUtility]
+
+class UtilityResponse(BaseModel):
+    teams: list[UtilityTeam]
+
+
+class PlayerClutch(BaseModel):
+    steamid: str
+    name: str
+    team: int | None
+    clutch_won: int
+    clutch_total: int
+
+class ClutchTeam(BaseModel):
+    name: str
+    score: int
+    players: list[PlayerClutch]
+
+class ClutchResponse(BaseModel):
+    teams: list[ClutchTeam]

@@ -2,7 +2,7 @@ import polars as pl
 
 
 def compute_trades(
-    kills: pl.DataFrame, tickrate: float, window_s: float = 3.0
+    kills: pl.DataFrame, tickrate: float, window_s: float = 2.25
 ) -> pl.DataFrame:
     """Une ligne par mort causée par un adversaire.
 
@@ -41,10 +41,11 @@ def compute_trades(
             & (pl.col("revenger_steamid") != pl.col("victim_steamid"))
             & (pl.col("revenge_tick") >= pl.col("death_tick"))
         )
+        .sort("revenge_tick")
         .group_by("death_id")
         .agg(
-            ((pl.col("revenge_tick") - pl.col("death_tick")).min() / tickrate)
-            .alias("delay_s")
+            ((pl.col("revenge_tick") - pl.col("death_tick")).first() / tickrate).alias("delay_s"),
+            pl.col("revenger_steamid").first().alias("trader_steamid"),
         )
     )
 

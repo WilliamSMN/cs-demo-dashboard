@@ -5,9 +5,9 @@ from uuid import uuid4
 import polars as pl
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Path, UploadFile
 
-from app.analysis.stats import compute_player_stats
+from app.analysis.stats import compute_player_stats, compute_trade_stats, compute_utility_stats, compute_clutch_stats
 from app.api.deps import current_steamid
-from app.schemas import MatchMeta, StatsResponse
+from app.schemas import MatchMeta, StatsResponse, TradesResponse, UtilityResponse, ClutchResponse
 from app.services import store
 from app.services.ingest import ingest_demo
 
@@ -63,6 +63,12 @@ def list_matches(owner: Owner):
 def get_match(match_id: MatchId, owner: Owner):
     return get_own_meta_or_404(match_id, owner)
 
+def load_match(match_id, owner, *tables: str) -> dict[str, pl.DataFrame]:
+    meta = get_own_meta_or_404(match_id, owner)
+    if meta["status"] != "ready":
+        raise HTTPException(status_code=409, detail=f"Match non prêt (statut : {meta['status']})")
+    folder = store.match_dir(match_id)
+    return {t: pl.read_parquet(folder / f"{t}.parquet") for t in tables}
 
 @router.get("/{match_id}/stats", response_model=StatsResponse)
 def get_stats(match_id: MatchId, owner: Owner):
@@ -78,3 +84,25 @@ def get_stats(match_id: MatchId, owner: Owner):
 
     result = compute_player_stats(kills, damages, rounds, players)
     return StatsResponse(**result)
+
+@router.get("/{match_id}/trades", response_model=TradesResponse)
+def get_trades(match_id: MatchId, owner: Owner):
+    meta = get_own_meta_or_404(match_id, owner)
+    if meta["status"] != "ready":
+        raise HTTPException(status_code=409, detail=f"Match non prêt (statut : {meta['status']})")
+
+    t = load_match(match_id, owner, "kills", "rounds", "players")
+    tickrate = meta.get("tickrate", 64)  # à adapter
+    return TradesResponse(**compute_trade_stats(t["kills"], t["players"], t["rounds"], tickrate))
+
+@router.get("/{match_id}/utility", response_model=UtilityResponse)
+def get_utility(match_id: MatchId, owner: Owner):
+    t = load_match(match_id, owner, "kills", "damages", "flashes", "flash_throws", "players", "rounds")
+    return UtilityResponse(**compute_utility_stats(
+        t["kills"], t["damages"], t["flashes"], t["flash_throws"], t["players"], t["rounds"]
+    ))
+
+@router.get("/{match_id}/clutch", response_model=ClutchResponse)
+def get_clutch(match_id: MatchId, owner: Owner):
+    t = load_match(match_id, owner, "kills", "players", "rounds")
+    return ClutchResponse(**compute_clutch_stats(t["kills"], t["players"], t["rounds"]))

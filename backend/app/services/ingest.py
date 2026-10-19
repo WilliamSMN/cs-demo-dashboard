@@ -13,7 +13,10 @@ def ingest_demo(match_id: str, demo_path: Path) -> None:
     """Parse la démo une fois, sauvegarde les tables utiles en Parquet."""
     try:
         dem = Demo(demo_path)
-        dem.parse()
+        dem.parse(events=[
+            *dem.default_events,
+            "player_blind",
+        ])
 
         folder = store.match_dir(match_id)
         folder.mkdir(parents=True, exist_ok=True)
@@ -43,6 +46,21 @@ def ingest_demo(match_id: str, demo_path: Path) -> None:
             .drop("starting_side")
         )
         players.write_parquet(folder / "players.parquet")
+
+        blinds = dem.events["player_blind"].select(
+            pl.col("attacker_steamid"),
+            pl.col("user_steamid").alias("victim_steamid"),
+            pl.col("blind_duration"),
+        )
+        blinds.write_parquet(folder / "flashes.parquet")
+
+        throws = (
+            dem.events["flashbang_detonate"]
+            .filter(pl.col("user_steamid").is_not_null())
+            .group_by(pl.col("user_steamid").alias("steamid"))
+            .agg(pl.len().alias("flashes_thrown"))
+        )
+        throws.write_parquet(folder / "flash_throws.parquet")
 
         store.update_meta(
             match_id,
