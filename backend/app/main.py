@@ -2,7 +2,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 
-from app.api import auth, matches
+from dotenv import load_dotenv
+load_dotenv()
+
+from app.api import auth, matches, users
 from app.config import settings
 
 app = FastAPI(title="CS Demo Dashboard")
@@ -24,6 +27,7 @@ app.add_middleware(
 
 app.include_router(auth.router)
 app.include_router(matches.router)
+app.include_router(users.router)
 
 
 @app.get("/health")

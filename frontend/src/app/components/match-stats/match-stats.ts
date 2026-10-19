@@ -1,6 +1,6 @@
 import { Component, input, signal, computed, inject } from '@angular/core';
 import { httpResource } from '@angular/common/http';
-import { StatsResponse } from '../../services/matches-api';
+import { StatsResponse, SteamProfile } from '../../services/matches-api';
 import { describeHttpError } from '../../services/http-errors';
 import { API_URL } from '../../config';
 import { Auth } from '../../services/auth';
@@ -26,6 +26,11 @@ export class MatchStats {
     () => `${API_URL}/matches/${this.matchId()}/stats`,
   );
   protected readonly auth = inject(Auth);
+
+  protected readonly profile = httpResource<SteamProfile>(() =>
+    this.auth.userSteamId() ? `${API_URL}/users/me/steam-profile` : undefined,
+  );
+
   protected readonly activeTab = signal<PrimaryTab>('general');
   protected readonly statsTab = signal<StatsTab>('scoreboard');
 

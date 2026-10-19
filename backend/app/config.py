@@ -11,6 +11,8 @@ class Settings(BaseSettings):
 
     session_secret: str = "dev-only-change-me"
     cookie_secure: bool = False 
+    
+    steam_api_key: str = ""
 
 
 settings = Settings()

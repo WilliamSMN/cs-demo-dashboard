@@ -85,6 +85,13 @@ export interface ClutchResponse {
   teams: Team<PlayerClutch>[];
 }
 
+export interface SteamProfile {
+  steamid: string;
+  name: string | null;
+  avatar: string | null;
+  is_public: boolean;
+}
+
 @Injectable({ providedIn: 'root' })
 export class MatchesApi {
   private readonly http = inject(HttpClient);
