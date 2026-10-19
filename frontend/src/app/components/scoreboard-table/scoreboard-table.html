@@ -1,0 +1,103 @@
+<section class="stats-container">
+  @let winnerTeamName = winningTeam();
+  @let usersTeamName = usersTeam();
+  @for (team of teamGroups(); track team.name) {
+    <section class="team-card">
+      <div class="team-heading">
+        <div class="team-identity">
+          <span
+            class="team-score"
+            [class.winner]="usersTeamName === team.name && usersTeamName === winnerTeamName"
+            [class.loser]="usersTeamName === team.name && usersTeamName !== winnerTeamName"
+          >
+            {{ team.score }}
+          </span>
+
+          <div class="team-info">
+            <h2>{{ team.name }}</h2>
+            @if (usersTeamName === team.name) {
+              <span class="your-team">YOUR TEAM</span>
+            }
+          </div>
+        </div>
+
+        <span class="player-count"> 👥 {{ team.players.length }} players </span>
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Player</th>
+              <th scope="col">
+                <button
+                  type="button"
+                  (click)="sortKey.set('kills')"
+                  [class.active]="sortKey() === 'kills'"
+                  [attr.aria-pressed]="sortKey() === 'kills'"
+                >
+                  K
+                </button>
+              </th>
+              <th scope="col">
+                <button
+                  type="button"
+                  (click)="sortKey.set('deaths')"
+                  [class.active]="sortKey() === 'deaths'"
+                  [attr.aria-pressed]="sortKey() === 'deaths'"
+                >
+                  D
+                </button>
+              </th>
+              <th scope="col">
+                <button
+                  type="button"
+                  (click)="sortKey.set('assists')"
+                  [class.active]="sortKey() === 'assists'"
+                  [attr.aria-pressed]="sortKey() === 'assists'"
+                >
+                  A
+                </button>
+              </th>
+              <th scope="col">
+                <button
+                  type="button"
+                  (click)="sortKey.set('adr')"
+                  [class.active]="sortKey() === 'adr'"
+                  [attr.aria-pressed]="sortKey() === 'adr'"
+                >
+                  ADR
+                </button>
+              </th>
+              <th scope="col">
+                <button
+                  type="button"
+                  (click)="sortKey.set('hs_pct')"
+                  [class.active]="sortKey() === 'hs_pct'"
+                  [attr.aria-pressed]="sortKey() === 'hs_pct'"
+                >
+                  % HS
+                </button>
+              </th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (player of team.players; track player.steamid) {
+              <tr [class.me]="player.steamid === userSteamId()">
+                <td class="player-name">{{ player.name }}</td>
+                <td>{{ player.kills }}</td>
+                <td>{{ player.deaths }}</td>
+                <td>{{ player.assists }}</td>
+                <td>{{ player.adr | number: '1.0-1' }}</td>
+                <td>{{ player.hs_pct | percent: '1.0-0' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  } @empty {
+    <p class="empty-state">No players are available for this game.</p>
+  }
+</section>

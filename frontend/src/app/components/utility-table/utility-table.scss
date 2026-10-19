@@ -1,0 +1,14 @@
+@use '../../styles/tables';
+
+:host {
+  display: block;
+  width: 100%;
+  color: #e5e7eb;
+}
+
+.empty-state,
+.loading-state {
+  padding: 1.5rem;
+  color: #9ca3af;
+  text-align: center;
+}

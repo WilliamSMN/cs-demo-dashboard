@@ -1,0 +1,128 @@
+.stats-container {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.team-card {
+  min-width: 0;
+  overflow: hidden;
+  background: #111722;
+  border: 1px solid #273244;
+  border-radius: 12px;
+}
+
+.team-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.15rem 1.25rem;
+  background: #111722;
+  border-bottom: 1px solid #273244;
+
+  .team-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
+  }
+
+  h2 {
+    margin: 0;
+    overflow-wrap: anywhere;
+    color: #f3f4f6;
+    font-size: 1rem;
+    font-weight: 650;
+  }
+
+  .your-team {
+    color: #a3e635;
+    font-size: 0.65rem;
+    font-weight: 750;
+    letter-spacing: 0.1em;
+  }
+}
+
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+th,
+td {
+  padding: 0.85rem 1rem;
+  text-align: right;
+  border-bottom: 1px solid #202a39;
+}
+
+th {
+  color: #9ca3af;
+  background: #0d131d;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+td {
+  color: #d1d5db;
+  font-variant-numeric: tabular-nums;
+}
+
+.player-name {
+  width: 100%;
+  min-width: 150px;
+  color: #f3f4f6;
+  text-align: left;
+  font-weight: 500;
+}
+
+th:first-child {
+  text-align: left;
+}
+
+tbody tr {
+  transition: background 150ms ease;
+}
+
+tbody tr:hover {
+  background: #192231;
+}
+
+tbody tr.me {
+  background: rgb(163 230 53 / 6%);
+
+  .player-name {
+    color: #a3e635;
+  }
+}
+
+tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+tfoot td {
+  color: #f3f4f6;
+  background: #0d131d;
+  font-weight: 700;
+  border-top: 1px solid #273244;
+  border-bottom: 0;
+}
+
+@media (max-width: 600px) {
+  th,
+  td {
+    padding: 0.75rem 0.65rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .team-heading {
+    padding: 0.9rem;
+  }
+}

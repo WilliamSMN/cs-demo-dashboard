@@ -1,0 +1,58 @@
+@if (clutch.hasValue()) {
+  <section class="stats-container">
+    @for (team of clutch.value()!.teams; track team.name) {
+      <section class="team-card">
+        <div class="team-heading">
+          <div class="team-info">
+            <h2>{{ team.name }}</h2>
+            @if (usersTeam() === team.name) {
+              <span class="your-team">YOUR TEAM</span>
+            }
+          </div>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Player</th>
+                <th scope="col">Clutches won</th>
+                <th scope="col">Attempts</th>
+                <th scope="col">Win rate</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (player of team.players; track player.steamid) {
+                <tr [class.me]="player.steamid === userSteamId()">
+                  <td class="player-name">{{ player.name }}</td>
+                  <td>{{ player.clutch_won ?? 0 }}</td>
+                  <td>{{ player.clutch_total ?? 0 }}</td>
+                  <td>
+                    {{
+                      (player.clutch_total ? player.clutch_won / player.clutch_total : 0)
+                        | percent: '1.0-0'
+                    }}
+                  </td>
+                </tr>
+              }
+            </tbody>
+            <tfoot>
+              <tr>
+                <td class="player-name">Total</td>
+                <td>{{ sumBy(team.players, 'clutch_won') }}</td>
+                <td>{{ sumBy(team.players, 'clutch_total') }}</td>
+                <td>
+                  {{
+                    (sumBy(team.players, 'clutch_total')
+                      ? sumBy(team.players, 'clutch_won') / sumBy(team.players, 'clutch_total')
+                      : 0
+                    ) | percent: '1.0-0'
+                  }}
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </section>
+    }
+  </section>
+}

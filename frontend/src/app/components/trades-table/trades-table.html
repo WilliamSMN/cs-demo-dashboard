@@ -1,0 +1,46 @@
+@if (trades.hasValue()) {
+  <section class="stats-container">
+    @for (team of trades.value()!.teams; track team.name) {
+      <section class="team-card">
+        <div class="team-heading">
+          <div class="team-info">
+            <h2>{{ team.name }}</h2>
+            @if (usersTeam() === team.name) {
+              <span class="your-team">YOUR TEAM</span>
+            }
+          </div>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Player</th>
+                <th scope="col">Trade kills</th>
+                <th scope="col">Traded deaths</th>
+                <th scope="col">Untraded deaths</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (player of team.players; track player.steamid) {
+                <tr [class.me]="player.steamid === userSteamId()">
+                  <td class="player-name">{{ player.name }}</td>
+                  <td>{{ player.trade_kills ?? 0 }}</td>
+                  <td>{{ player.traded_deaths ?? 0 }}</td>
+                  <td>{{ player.untraded_deaths ?? 0 }}</td>
+                </tr>
+              }
+            </tbody>
+            <tfoot>
+              <tr>
+                <td class="player-name">Total</td>
+                <td>{{ sumBy(team.players, 'trade_kills') }}</td>
+                <td>{{ sumBy(team.players, 'traded_deaths') }}</td>
+                <td>{{ sumBy(team.players, 'untraded_deaths') }}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </section>
+    }
+  </section>
+}

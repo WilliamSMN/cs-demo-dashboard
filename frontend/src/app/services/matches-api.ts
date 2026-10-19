@@ -18,6 +18,12 @@ export interface MatchMeta {
   error: string | null;
 }
 
+export interface Team<P> {
+  name: string;
+  score: number;
+  players: P[];
+}
+
 export interface PlayerStats {
   steamid: string;
   name: string;
@@ -30,15 +36,53 @@ export interface PlayerStats {
   hs_pct: number;
 }
 
-export interface TeamStats {
-  name: string;
-  score: number;
-  players: PlayerStats[];
-}
+export type TeamStats = Team<PlayerStats>;
 
 export interface StatsResponse {
   teams: TeamStats[];
   unattributed_deaths: number;
+}
+
+export interface PlayerTrades {
+  steamid: string;
+  name: string;
+  team: number | null;
+  trade_kills: number;
+  traded_deaths: number;
+  untraded_deaths: number;
+}
+
+export interface TradesResponse {
+  teams: Team<PlayerTrades>[];
+}
+
+export interface PlayerUtility {
+  steamid: string;
+  name: string;
+  team: number | null;
+  flashes_thrown: number;
+  enemies_flashed: number;
+  team_flashed: number;
+  flash_assists: number;
+  he_damage: number;
+  molotov_damage: number;
+  blind_time: number;
+}
+
+export interface UtilityResponse {
+  teams: Team<PlayerUtility>[];
+}
+
+export interface PlayerClutch {
+  steamid: string;
+  name: string;
+  team: number | null;
+  clutch_won: number;
+  clutch_total: number;
+}
+
+export interface ClutchResponse {
+  teams: Team<PlayerClutch>[];
 }
 
 @Injectable({ providedIn: 'root' })

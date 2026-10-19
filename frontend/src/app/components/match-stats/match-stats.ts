@@ -1,15 +1,20 @@
 import { Component, input, signal, computed, inject } from '@angular/core';
-import { DecimalPipe, PercentPipe } from '@angular/common';
 import { httpResource } from '@angular/common/http';
 import { StatsResponse } from '../../services/matches-api';
 import { describeHttpError } from '../../services/http-errors';
 import { API_URL } from '../../config';
 import { Auth } from '../../services/auth';
+import { TradesTable } from '../trades-table/trades-table';
+import { ScoreboardTable } from '../scoreboard-table/scoreboard-table';
+import { UtilityTable } from '../utility-table/utility-table';
+import { ClutchTable } from '../clutch-table/clutch-table';
+import { DecimalPipe, PercentPipe } from '@angular/common';
 
-type SortKey = 'kills' | 'deaths' | 'assists' | 'adr' | 'hs_pct';
+type PrimaryTab = 'general' | 'report';
+type StatsTab = 'scoreboard' | 'utility' | 'trades' | 'clutch';
 
 @Component({
-  imports: [DecimalPipe, PercentPipe],
+  imports: [DecimalPipe, PercentPipe, TradesTable, ScoreboardTable, UtilityTable, ClutchTable],
   selector: 'app-match-stats',
   styleUrl: './match-stats.scss',
   templateUrl: './match-stats.html',
@@ -20,37 +25,26 @@ export class MatchStats {
   protected readonly stats = httpResource<StatsResponse>(
     () => `${API_URL}/matches/${this.matchId()}/stats`,
   );
-
   protected readonly auth = inject(Auth);
+  protected readonly activeTab = signal<PrimaryTab>('general');
+  protected readonly statsTab = signal<StatsTab>('scoreboard');
 
-  protected readonly sortKey = signal<SortKey>('kills');
-
-  protected readonly teamGroups = computed(() => {
-    const key = this.sortKey();
-    const teams = this.stats.value()?.teams ?? [];
-
-    return teams.map((team) => ({
-      ...team,
-      players: [...team.players].sort((a, b) => b[key] - a[key]),
-    }));
-  });
+  protected readonly statsTabs: { key: StatsTab; label: string }[] = [
+    { key: 'scoreboard', label: 'Scoreboard' },
+    { key: 'utility', label: 'Utility' },
+    { key: 'trades', label: 'Trades' },
+    { key: 'clutch', label: 'Clutch' },
+  ];
 
   protected readonly usersTeam = computed(() => {
     const userSteamId = this.auth.userSteamId();
     if (!userSteamId) return undefined;
 
     // Trouve directement l'équipe qui contient le joueur
-    const team = this.teamGroups().find((t) => t.players.some((p) => p.steamid === userSteamId));
+    const team = (this.stats.value()?.teams ?? []).find((t) =>
+      t.players.some((p) => p.steamid === userSteamId),
+    );
     return team?.name;
-  });
-
-  protected readonly winningTeam = computed(() => {
-    const teams = this.teamGroups();
-    if (teams.length === 0) return undefined;
-
-    return teams.reduce((maxTeam, currentTeam) =>
-      currentTeam.score > maxTeam.score ? currentTeam : maxTeam,
-    ).name;
   });
 
   protected readonly userPlayer = computed(() => {

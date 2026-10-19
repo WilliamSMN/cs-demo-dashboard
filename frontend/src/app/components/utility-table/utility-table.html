@@ -1,0 +1,57 @@
+@if (utility.hasValue()) {
+  <section class="stats-container">
+    @for (team of utility.value()!.teams; track team.name) {
+      <section class="team-card">
+        <div class="team-heading">
+          <div class="team-info">
+            <h2>{{ team.name }}</h2>
+            @if (usersTeam() === team.name) {
+              <span class="your-team">YOUR TEAM</span>
+            }
+          </div>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Player</th>
+                <th scope="col">Flashes</th>
+                <th scope="col">Enemies flashed</th>
+                <th scope="col">Flash assists</th>
+                <th scope="col">HE dmg</th>
+                <th scope="col">Molotov dmg</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (player of team.players; track player.steamid) {
+                <tr [class.me]="player.steamid === userSteamId()">
+                  <td class="player-name">{{ player.name }}</td>
+                  <td>{{ player.flashes_thrown ?? 0 }}</td>
+                  <td>{{ player.enemies_flashed ?? 0 }}</td>
+                  <td>{{ player.flash_assists ?? 0 }}</td>
+                  <td>{{ player.he_damage ?? 0 }}</td>
+                  <td>{{ player.molotov_damage ?? 0 }}</td>
+                </tr>
+              }
+            </tbody>
+            <tfoot>
+              <tr>
+                <td class="player-name">Total</td>
+                <td>{{ sumBy(team.players, 'flashes_thrown') }}</td>
+                <td>{{ sumBy(team.players, 'enemies_flashed') }}</td>
+                <td>{{ sumBy(team.players, 'flash_assists') }}</td>
+                <td>{{ sumBy(team.players, 'he_damage') }}</td>
+                <td>{{ sumBy(team.players, 'molotov_damage') }}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </section>
+    }
+  </section>
+} @else if (utility.error()) {
+  <p>Error!</p>
+  <button type="button" (click)="utility.reload()">Try again</button>
+} @else if (utility.isLoading()) {
+  <div class="loading-state">Loading utility...</div>
+}
