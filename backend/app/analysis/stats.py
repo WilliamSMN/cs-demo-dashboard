@@ -1,11 +1,12 @@
 import polars as pl
 from app.analysis.trades import compute_trades 
 
+from app.analysis.common import HALF_LENGTH, is_friendly, merge_player_tables
 
 def build_teams(player_df: pl.DataFrame, rounds: pl.DataFrame) -> list[dict]:
     if "winner" in rounds.columns and rounds.height > 0:
         rounds_evaluated = rounds.with_columns(
-            pl.when(pl.col("round_num") <= 12)
+            pl.when(pl.col("round_num") <= HALF_LENGTH)
             .then(
                 pl.when(pl.col("winner").str.to_uppercase() == "CT").then(pl.lit(0))
                 .otherwise(pl.lit(1))
@@ -36,9 +37,6 @@ def build_teams(player_df: pl.DataFrame, rounds: pl.DataFrame) -> list[dict]:
 
 def compute_player_df(kills, damages, rounds, players) -> pl.DataFrame:
     n_rounds = rounds.height
-
-    def is_friendly(attacker_side: str, victim_side: str) -> pl.Expr:
-            return (pl.col(attacker_side) == pl.col(victim_side)).fill_null(False)
     
     enemy_kills = kills.filter(
         pl.col("attacker_steamid").is_not_null()
@@ -118,12 +116,11 @@ def compute_trade_stats(
     )
 
     counts = ["trade_kills", "traded_deaths", "untraded_deaths"]
-    player_df = (
-        players.join(trade_kills, on="steamid", how="left")
-        .join(deaths, on="steamid", how="left")
-        .with_columns(pl.col(counts).fill_null(0))
-        .select("steamid", "name", "team", *counts)
-        .sort("trade_kills", descending=True)
+    player_df = merge_player_tables(
+        players,
+        [trade_kills, deaths],
+        ["trade_kills", "traded_deaths", "untraded_deaths"],
+        sort_by="trade_kills",
     )
     return {"teams": build_teams(player_df, rounds)}
 
@@ -158,7 +155,7 @@ def compute_clutches(
                     started[t] = (next(iter(alive[t])), len(alive[1 - t]))
 
         for t, (sid, vs) in started.items():
-            side = "CT" if (t == 0) == (round_num <= 12) else "T"
+            side = "CT" if (t == 0) == (round_num <= HALF_LENGTH) else "T"
             won = sid in alive[t] and winners.get(round_num) == side
             rows.append({"steamid": sid, "round_num": round_num, "vs": vs, "won": won})
 
@@ -178,11 +175,8 @@ def compute_clutch_stats(
         pl.col("won").sum().alias("clutch_won"),
     )
     counts = ["clutch_won", "clutch_total"]
-    player_df = (
-        players.join(agg, on="steamid", how="left")
-        .with_columns(pl.col(counts).fill_null(0))
-        .select("steamid", "name", "team", *counts)
-        .sort("clutch_won", descending=True)
+    player_df = merge_player_tables(
+        players, [agg], counts, sort_by="clutch_won"
     )
     return {"teams": build_teams(player_df, rounds)}
 
@@ -190,7 +184,7 @@ def compute_utility_stats(
     kills: pl.DataFrame,
     damages: pl.DataFrame,
     flashes: pl.DataFrame,
-    throws: pl.DataFrame,
+    flash_throws: pl.DataFrame,
     players: pl.DataFrame,
     rounds: pl.DataFrame,
 ) -> dict:
@@ -263,15 +257,12 @@ def compute_utility_stats(
             .alias("blind_time"),
         )
 
-    counts = ["flashes_thrown","enemies_flashed", "team_flashed", "flash_assists", "he_damage", "molotov_damage"]
-    player_df = (
-        players.join(flash_stats, on="steamid", how="left")
-        .join(throws, on="steamid", how="left")
-        .join(flash_assists, on="steamid", how="left")
-        .join(he, on="steamid", how="left")
-        .join(molotov, on="steamid", how="left")
-        .with_columns(pl.col(counts).fill_null(0), pl.col("blind_time").fill_null(0.0))
-        .select("steamid", "name", "team", *counts, "blind_time")
-        .sort("enemies_flashed", descending=True)
+    player_df = merge_player_tables(
+        players,
+        [flash_stats, flash_throws, flash_assists, he, molotov],
+        ["flashes_thrown", "enemies_flashed", "team_flashed",
+         "flash_assists", "he_damage", "molotov_damage"],
+        sort_by="enemies_flashed",
+        floats=("blind_time",),
     )
     return {"teams": build_teams(player_df, rounds)}
