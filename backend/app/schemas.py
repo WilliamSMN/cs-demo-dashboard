@@ -142,3 +142,50 @@ class ExtrasResponse(BaseModel):
     trades: TradeCounts
     utility: UtilityCounts
     clutches: list[ClutchRound]
+
+
+class WeaponStats(BaseModel):
+    weapon: str
+    kills: int
+    headshots: int
+    damage: int
+
+
+class OpponentRecord(BaseModel):
+    steamid: str
+    name: str
+    killed: int
+    killed_by: int
+
+
+class WeaponsResponse(BaseModel):
+    weapons: list[WeaponStats]
+    opponents: list[OpponentRecord]
+
+
+class PositionEvent(BaseModel):
+    round_num: int
+    side: Side
+    kind: Literal["kill", "death"]
+    x: float
+    y: float
+    z: float
+    px: float | None = None   # position sur l'image radar (0 à 1024)
+    py: float | None = None
+
+
+class PositionsResponse(BaseModel):
+    map_name: str | None = None
+    radar_size: int = 1024
+    events: list[PositionEvent]
+
+
+class ProfileAxis(BaseModel):
+    key: Literal["aim", "impact", "utility", "clutch", "opening", "trade"]
+    score: float | None  # 0 à 100, 50 = joueur moyen ; None si aucun essai (clutch, opening)
+    values: dict[str, float | None]  # valeurs brutes, pour les infobulles
+
+
+class ProfileResponse(BaseModel):
+    reference: float = 50.0
+    axes: list[ProfileAxis]

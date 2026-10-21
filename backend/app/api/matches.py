@@ -6,9 +6,32 @@ import polars as pl
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Path, UploadFile
 
 from app.analysis.stats import compute_player_stats, compute_trade_stats, compute_utility_stats, compute_clutch_stats
-from app.analysis.report import build_player_summary, build_round_impact, build_kill_timing, build_opening_duels, build_extras
+from app.analysis.report import (
+    build_player_summary, 
+    build_round_impact, 
+    build_kill_timing, 
+    build_opening_duels, 
+    build_extras, 
+    build_weapons_and_opponents, 
+    build_positions
+)
+from app.analysis.profile import build_profile
 from app.api.deps import current_steamid
-from app.schemas import MatchMeta, StatsResponse, TradesResponse, UtilityResponse, ClutchResponse, PlayerReportSummary, RoundImpactResponse, KillTimingResponse, OpeningDuelsResponse, ExtrasResponse
+from app.schemas import (
+    MatchMeta, 
+    StatsResponse, 
+    TradesResponse, 
+    UtilityResponse, 
+    ClutchResponse, 
+    PlayerReportSummary, 
+    RoundImpactResponse, 
+    KillTimingResponse, 
+    OpeningDuelsResponse, 
+    ExtrasResponse, 
+    WeaponsResponse, 
+    PositionsResponse,
+    ProfileResponse
+)
 from app.services import store
 from app.services.ingest import ingest_demo
 
@@ -123,8 +146,9 @@ def get_clutch(match_id: MatchId, owner: Owner):
 
 @router.get("/{match_id}/report/summary", response_model=PlayerReportSummary)
 def get_report_summary(match_id: MatchId, owner: Owner):
-    t = load_match(match_id, owner, "kills", "damages", "rounds", "players")
-    return or_404(build_player_summary(**t, steamid=owner))
+    meta = get_ready_meta(match_id, owner)
+    t = load_tables(match_id, "kills", "damages", "rounds", "players")
+    return or_404(build_player_summary(**t, steamid=owner, tickrate=tickrate_of(meta)))
 
 
 @router.get("/{match_id}/report/rounds", response_model=RoundImpactResponse)
@@ -153,3 +177,27 @@ def get_report_extras(match_id: MatchId, owner: Owner):
         match_id, "kills", "damages", "flashes", "flash_throws", "players", "rounds"
     )
     return or_404(build_extras(**t, steamid=owner, tickrate=tickrate_of(meta)))
+
+
+@router.get("/{match_id}/report/weapons", response_model=WeaponsResponse)
+def get_report_weapons(match_id: MatchId, owner: Owner):
+    t = load_match(match_id, owner, "kills", "damages")
+    return build_weapons_and_opponents(**t, steamid=owner)
+
+
+@router.get("/{match_id}/report/positions", response_model=PositionsResponse)
+def get_report_positions(match_id: MatchId, owner: Owner):
+    meta = get_ready_meta(match_id, owner)
+    t = load_tables(match_id, "kills", "players")
+    map_name = meta.get("map_name")
+    result = or_404(build_positions(**t, steamid=owner, map_name=map_name))
+    return {"map_name": map_name, **result}
+
+
+@router.get("/{match_id}/report/profile", response_model=ProfileResponse)
+def get_report_profile(match_id: MatchId, owner: Owner):
+    meta = get_ready_meta(match_id, owner)
+    t = load_tables(
+        match_id, "kills", "damages", "flashes", "flash_throws", "players", "rounds"
+    )
+    return or_404(build_profile(**t, steamid=owner, tickrate=tickrate_of(meta)))
