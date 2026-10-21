@@ -1,6 +1,9 @@
-from typing import Literal
+from typing import Generic, Literal, TypeVar
 
 from pydantic import BaseModel
+
+T = TypeVar("T")
+Side = Literal["ct", "t"]
 
 
 class MatchMeta(BaseModel):
@@ -13,74 +16,129 @@ class MatchMeta(BaseModel):
     error: str | None = None
 
 
-class PlayerStats(BaseModel):
+# Enveloppe commune : une équipe contient des joueurs d'un type donné
+class Team(BaseModel, Generic[T]):
+    name: str
+    score: int
+    players: list[T]
+
+
+class Teams(BaseModel, Generic[T]):
+    teams: list[Team[T]]
+
+
+# Identité commune à tous les joueurs
+class PlayerBase(BaseModel):
     steamid: str
     name: str
     team: int | None = None
-    kills: int
-    deaths: int
-    assists: int
-    damage: int  # Corrigé en 'damage' (cohérent avec ton code précédent)
-    adr: float
-    hs_pct: float
 
-class TeamStats(BaseModel):
-    name: str        # Ex: "Team 0" (ou le nom réel si disponible)
-    score: int       # Score final de l'équipe
-    players: list[PlayerStats]
 
-class StatsResponse(BaseModel):
-    teams: list[TeamStats]
-    unattributed_deaths: int
-
-class PlayerTrades(BaseModel):
-    steamid: str
-    name: str
-    team: int | None
+# Compteurs par domaine (réutilisés dans le Player report)
+class TradeCounts(BaseModel):
     trade_kills: int
     traded_deaths: int
     untraded_deaths: int
 
-class TradeTeam(BaseModel):
-    name: str
-    score: int
-    players: list[PlayerTrades]
 
-class TradesResponse(BaseModel):
-    teams: list[TradeTeam]
-
-class PlayerUtility(BaseModel):
-    steamid: str
-    name: str
-    team: int | None
+class UtilityCounts(BaseModel):
+    flashes_thrown: int
     enemies_flashed: int
     team_flashed: int
     flash_assists: int
     he_damage: int
     molotov_damage: int
     blind_time: float
-    flashes_thrown: int
-
-class UtilityTeam(BaseModel):
-    name: str
-    score: int
-    players: list[PlayerUtility]
-
-class UtilityResponse(BaseModel):
-    teams: list[UtilityTeam]
 
 
-class PlayerClutch(BaseModel):
-    steamid: str
-    name: str
-    team: int | None
+# Page General
+class PlayerStats(PlayerBase):
+    kills: int
+    deaths: int
+    assists: int
+    damage: int
+    adr: float
+    hs_pct: float
+
+
+class PlayerTrades(PlayerBase, TradeCounts):
+    pass
+
+
+class PlayerUtility(PlayerBase, UtilityCounts):
+    pass
+
+
+class PlayerClutch(PlayerBase):
     clutch_won: int
     clutch_total: int
 
-class ClutchTeam(BaseModel):
-    name: str
-    score: int
-    players: list[PlayerClutch]
 
-class ClutchResponse(BaseModel):
-    teams: list[ClutchTeam]
+class StatsResponse(Teams[PlayerStats]):
+    unattributed_deaths: int
+
+
+class TradesResponse(Teams[PlayerTrades]):
+    pass
+
+
+class UtilityResponse(Teams[PlayerUtility]):
+    pass
+
+
+class ClutchResponse(Teams[PlayerClutch]):
+    pass
+
+
+# Player report
+class PlayerReportSummary(PlayerStats):
+    rounds: int
+    kast: float | None = None
+    rating: float | None = None
+
+
+class RoundImpact(BaseModel):
+    round_num: int
+    side: Side
+    won: bool
+    kills: int
+    headshots: int
+    damage: int
+    died: bool
+
+
+class RoundImpactResponse(BaseModel):
+    rounds: list[RoundImpact]
+
+
+class KillEvent(BaseModel):
+    round_num: int
+    side: Side
+    kind: Literal["kill", "death"]
+    seconds: float
+
+
+class KillTimingResponse(BaseModel):
+    events: list[KillEvent]
+
+
+class OpeningDuel(BaseModel):
+    round_num: int
+    side: Side
+    won: bool
+
+
+class OpeningDuelsResponse(BaseModel):
+    duels: list[OpeningDuel]
+
+
+class ClutchRound(BaseModel):
+    round_num: int
+    vs: int
+    won: bool
+
+
+class ExtrasResponse(BaseModel):
+    trades: TradeCounts
+    utility: UtilityCounts
+    clutches: list[ClutchRound]

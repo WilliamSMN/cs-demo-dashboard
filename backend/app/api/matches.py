@@ -6,8 +6,9 @@ import polars as pl
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Path, UploadFile
 
 from app.analysis.stats import compute_player_stats, compute_trade_stats, compute_utility_stats, compute_clutch_stats
+from app.analysis.report import build_player_summary, build_round_impact, build_kill_timing
 from app.api.deps import current_steamid
-from app.schemas import MatchMeta, StatsResponse, TradesResponse, UtilityResponse, ClutchResponse
+from app.schemas import MatchMeta, StatsResponse, TradesResponse, UtilityResponse, ClutchResponse, PlayerReportSummary, RoundImpactResponse, KillTimingResponse
 from app.services import store
 from app.services.ingest import ingest_demo
 
@@ -106,3 +107,34 @@ def get_utility(match_id: MatchId, owner: Owner):
 def get_clutch(match_id: MatchId, owner: Owner):
     t = load_match(match_id, owner, "kills", "players", "rounds")
     return ClutchResponse(**compute_clutch_stats(t["kills"], t["players"], t["rounds"]))
+
+@router.get("/{match_id}/report/summary", response_model=PlayerReportSummary)
+def get_report_summary(match_id: MatchId, owner: Owner):
+    t = load_match(match_id, owner, "kills", "damages", "rounds", "players")
+    summary = build_player_summary(
+        t["kills"], t["damages"], t["rounds"], t["players"], owner
+    )
+    if summary is None:
+        raise HTTPException(status_code=404, detail="Joueur absent de ce match")
+    return PlayerReportSummary(**summary)
+
+@router.get("/{match_id}/report/rounds", response_model=RoundImpactResponse)
+def get_report_rounds(match_id: MatchId, owner: Owner):
+    t = load_match(match_id, owner, "kills", "damages", "rounds", "players")
+    result = build_round_impact(
+        t["kills"], t["damages"], t["rounds"], t["players"], owner
+    )
+    if result is None:
+        raise HTTPException(status_code=404, detail="Joueur absent de ce match")
+    return RoundImpactResponse(**result)
+
+@router.get("/{match_id}/report/timing", response_model=KillTimingResponse)
+def get_report_timing(match_id: MatchId, owner: Owner):
+    meta = get_own_meta_or_404(match_id, owner)
+    t = load_match(match_id, owner, "kills", "rounds", "players")
+    result = build_kill_timing(
+        t["kills"], t["rounds"], t["players"], owner, meta.get("tickrate") or 64
+    )
+    if result is None:
+        raise HTTPException(status_code=404, detail="Joueur absent de ce match")
+    return KillTimingResponse(**result)

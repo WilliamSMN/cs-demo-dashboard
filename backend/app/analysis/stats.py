@@ -34,17 +34,12 @@ def build_teams(player_df: pl.DataFrame, rounds: pl.DataFrame) -> list[dict]:
         teams.append({"name": "Spectateurs / Indéfinis", "score": 0, "players": others})
     return teams
 
-def compute_player_stats(
-    kills: pl.DataFrame,
-    damages: pl.DataFrame,
-    rounds: pl.DataFrame,
-    players: pl.DataFrame,
-) -> dict:
+def compute_player_df(kills, damages, rounds, players) -> pl.DataFrame:
     n_rounds = rounds.height
 
     def is_friendly(attacker_side: str, victim_side: str) -> pl.Expr:
-        return (pl.col(attacker_side) == pl.col(victim_side)).fill_null(False)
-
+            return (pl.col(attacker_side) == pl.col(victim_side)).fill_null(False)
+    
     enemy_kills = kills.filter(
         pl.col("attacker_steamid").is_not_null()
         & ~is_friendly("attacker_side", "victim_side")
@@ -93,6 +88,15 @@ def compute_player_stats(
         .sort("kills", descending=True)
     )
     
+    return player_df
+
+def compute_player_stats(
+    kills: pl.DataFrame,
+    damages: pl.DataFrame,
+    rounds: pl.DataFrame,
+    players: pl.DataFrame,
+) -> dict:
+    player_df = compute_player_df(kills, damages, rounds, players)
     return {
         "teams": build_teams(player_df, rounds),
         "unattributed_deaths": kills["victim_steamid"].null_count(),
