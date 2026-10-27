@@ -1,0 +1,205 @@
+$dots-space: 58px; // place réservée au-dessus de la barre la plus haute pour les points
+$plot-min: 140px; // hauteur minimale de la zone des barres
+
+:host {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.card {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 1.5rem;
+  background: #111722;
+  border: 1px solid #273244;
+  border-radius: 14px;
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.card-label {
+  color: #9ca3af;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.seg {
+  display: flex;
+  padding: 3px;
+  background: #0d131d;
+  border: 1px solid #273244;
+  border-radius: 10px;
+
+  button {
+    padding: 0.35rem 0.8rem;
+    color: #9ca3af;
+    background: transparent;
+    border: 0;
+    border-radius: 7px;
+    font: inherit;
+    font-size: 0.8rem;
+    cursor: pointer;
+
+    &:hover {
+      color: #e5e7eb;
+    }
+
+    &.active {
+      color: #a3e635;
+      background: rgb(163 230 53 / 12%);
+    }
+
+    &:focus-visible {
+      outline: 2px solid #a3e635;
+      outline-offset: 1px;
+    }
+  }
+}
+
+// La zone du graphique prend toute la hauteur restante de la carte
+.chart {
+  display: flex;
+  flex: 1;
+  gap: 6px;
+  padding-bottom: 0.25rem;
+  overflow-x: auto;
+}
+
+.round {
+  display: flex;
+  flex: 1 0 22px;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.bar-slot {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  min-height: calc(#{$dots-space} + #{$plot-min});
+}
+
+// La zone des barres : sa hauteur sert de référence (100 %) à la barre et aux points
+.plot {
+  position: absolute;
+  inset: $dots-space 0 0;
+}
+
+.bar {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: calc(var(--h) * 1%);
+  background: #5b6e92;
+  border-radius: 4px 4px 0 0;
+  transition: height 200ms ease;
+
+  &.won {
+    background: #a3e635;
+  }
+}
+
+// Les points sont ancrés juste au-dessus du haut de la barre
+.dots {
+  position: absolute;
+  bottom: calc(var(--h) * 1% + 4px);
+  left: 50%;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  transform: translateX(-50%);
+  transition: bottom 200ms ease;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  background: #a3e635;
+  border-radius: 50%;
+}
+
+.death {
+  height: 14px;
+  color: #fb923c;
+  font-size: 0.7rem;
+  line-height: 14px;
+
+  &.alive {
+    visibility: hidden;
+  }
+}
+
+.round-num {
+  color: #9ca3af;
+  font-size: 0.7rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  margin: 1.25rem 0 0;
+  padding: 0;
+  color: #9ca3af;
+  font-size: 0.75rem;
+  list-style: none;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .hint {
+    margin-left: auto;
+  }
+}
+
+.swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+
+  &.won {
+    background: #a3e635;
+  }
+
+  &.lost {
+    background: #5b6e92;
+  }
+
+  &.kill {
+    background: #a3e635;
+    border-radius: 50%;
+  }
+}
+
+.death-legend {
+  color: #fb923c;
+}
+
+.empty {
+  margin: 0;
+  color: #9ca3af;
+  text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar,
+  .dots {
+    transition: none;
+  }
+}

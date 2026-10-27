@@ -1,0 +1,37 @@
+<section class="card">
+  <header class="card-head">
+    <span class="card-label">Opponents</span>
+  </header>
+
+  @if (rows().length === 0) {
+    <p class="empty">No opponent data.</p>
+  } @else {
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Player</th>
+            <th scope="col" class="num">Killed</th>
+            <th scope="col" class="num">Killed by</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of rows(); track $index) {
+            <tr [class.good]="row.tone === 'good'" [class.bad]="row.tone === 'bad'">
+              <th scope="row" class="name" [title]="row.name">{{ row.name }}</th>
+              <td class="num killed">{{ row.killed }}</td>
+              <td class="num killed-by">{{ row.killedBy }}</td>
+            </tr>
+          }
+        </tbody>
+        <tfoot>
+          <tr>
+            <th scope="row">Total</th>
+            <td class="num">{{ totals().killed }}</td>
+            <td class="num">{{ totals().killedBy }}</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  }
+</section>

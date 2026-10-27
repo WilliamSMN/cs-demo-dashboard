@@ -1,0 +1,37 @@
+<section class="card">
+  <header class="card-head">
+    <span class="card-label">Player profile</span>
+  </header>
+
+  <svg
+    class="radar"
+    viewBox="0 0 360 300"
+    role="img"
+    [attr.aria-label]="'Player profile: ' + description()"
+  >
+    @for (ring of rings(); track $index) {
+      <polygon class="ring" [attr.points]="ring" />
+    }
+
+    @for (axis of axes(); track axis.label) {
+      <line class="spoke" x1="180" y1="150" [attr.x2]="axis.spoke.x" [attr.y2]="axis.spoke.y" />
+    }
+
+    <polygon class="reference" [attr.points]="referencePoints()" />
+    <polygon class="value" [attr.points]="valuePoints()" />
+
+    @for (axis of axes(); track axis.label) {
+      <text class="axis-label" [attr.x]="axis.labelPos.x" [attr.y]="axis.labelPos.y">
+        {{ axis.label }}
+      </text>
+      <text class="axis-score" [attr.x]="axis.labelPos.x" [attr.y]="axis.labelPos.y + 15">
+        {{ axis.score }}
+      </text>
+    }
+  </svg>
+
+  <ul class="legend">
+    <li><span class="swatch player"></span>Player</li>
+    <li><span class="swatch reference"></span>Average player</li>
+  </ul>
+</section>

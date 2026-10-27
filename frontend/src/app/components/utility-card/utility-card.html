@@ -1,0 +1,22 @@
+<section class="card">
+  <header class="card-head">
+    <span class="card-label">Utility</span>
+  </header>
+
+  <dl class="stats">
+    @for (stat of stats(); track stat.label) {
+      <div class="stat" [class.warn]="stat.tone === 'warn'">
+        <dt class="stat-label">{{ stat.label }}</dt>
+        <dd class="stat-value">
+          {{ stat.value }}
+          @if (stat.tone === 'warn') {
+            <span class="sr-only">(warning)</span>
+          }
+        </dd>
+        @if (stat.sub) {
+          <dd class="stat-sub">{{ stat.sub }}</dd>
+        }
+      </div>
+    }
+  </dl>
+</section>

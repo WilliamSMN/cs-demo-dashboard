@@ -9,12 +9,13 @@ import { ScoreboardTable } from '../scoreboard-table/scoreboard-table';
 import { UtilityTable } from '../utility-table/utility-table';
 import { ClutchTable } from '../clutch-table/clutch-table';
 import { DecimalPipe, PercentPipe } from '@angular/common';
+import { PlayerReport } from '../player-report/player-report';
 
 type PrimaryTab = 'general' | 'report';
 type StatsTab = 'scoreboard' | 'utility' | 'trades' | 'clutch';
 
 @Component({
-  imports: [DecimalPipe, PercentPipe, TradesTable, ScoreboardTable, UtilityTable, ClutchTable],
+  imports: [DecimalPipe, PercentPipe, TradesTable, ScoreboardTable, UtilityTable, ClutchTable, PlayerReport],
   selector: 'app-match-stats',
   styleUrl: './match-stats.scss',
   templateUrl: './match-stats.html',

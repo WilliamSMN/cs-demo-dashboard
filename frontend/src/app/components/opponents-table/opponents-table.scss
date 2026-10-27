@@ -1,0 +1,99 @@
+:host {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.card {
+  flex: 1;
+  padding: 1.5rem;
+  background: #111722;
+  border: 1px solid #273244;
+  border-radius: 14px;
+}
+
+.card-head {
+  margin-bottom: 1rem;
+}
+
+.card-label {
+  color: #9ca3af;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+th,
+td {
+  padding: 0.6rem 0.5rem;
+  text-align: left;
+  border-bottom: 1px solid #1f2937;
+}
+
+thead th {
+  color: #9ca3af;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-bottom-color: #273244;
+}
+
+tbody th,
+tfoot th {
+  color: #e5e7eb;
+  font-weight: 600;
+}
+
+td {
+  color: #f3f4f6;
+}
+
+.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+// Les noms longs sont tronqués, le nom complet reste dans l'infobulle
+.name {
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+tr.good .killed {
+  color: #a3e635;
+  font-weight: 700;
+}
+
+tr.bad .killed-by {
+  color: #fb923c;
+  font-weight: 700;
+}
+
+tfoot {
+  th,
+  td {
+    color: #9ca3af;
+    border-top: 1px solid #273244;
+    border-bottom: 0;
+  }
+}
+
+.empty {
+  margin: 0;
+  color: #9ca3af;
+  text-align: center;
+}

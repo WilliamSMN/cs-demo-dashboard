@@ -1,0 +1,41 @@
+@if (summary.hasValue()) {
+  <div class="report">
+    <app-kpi-cards [summary]="summary.value()!" [duels]="opening.value()?.duels ?? []" />
+
+    <section class="row row-impact">
+      <app-round-impact-chart [rounds]="rounds.value()?.rounds ?? []" />
+      @if (profile.hasValue()) {
+        <app-profile-radar [profile]="profile.value()!" />
+      }
+    </section>
+
+    <section class="row row-map">
+      <app-kill-map [positions]="positions.value()!" />
+      <div class="stack">
+        @if (opening.hasValue() && extras.hasValue()) {
+          <app-duels-card [duels]="opening.value()!.duels" [extras]="extras.value()!" />
+        }
+        @if (extras.hasValue()) {
+          <app-utility-card [utility]="extras.value()!.utility" />
+        }
+      </div>
+    </section>
+
+    <section class="row row-three">
+      @if (timing.hasValue()) {
+        <app-timing-histogram [events]="timing.value()!.events" />
+      }
+      @if (weapons.hasValue()) {
+        <app-weapons-table [weapons]="weapons.value()!.weapons" />
+        <app-opponents-table [opponents]="weapons.value()!.opponents" />
+      }
+    </section>
+  </div>
+} @else if (summary.error()) {
+  <div class="state">
+    <p>{{ errorMessage() }}</p>
+    <button type="button" (click)="summary.reload()">Try again</button>
+  </div>
+} @else if (summary.isLoading()) {
+  <div class="state">Loading report...</div>
+}

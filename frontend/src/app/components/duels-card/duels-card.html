@@ -1,0 +1,38 @@
+<section class="card">
+  <header class="card-head">
+    <span class="card-label">Duels</span>
+  </header>
+
+  <div class="rows">
+    @for (row of rows(); track row.label) {
+      <div class="row">
+        <div class="row-head">
+          <span class="row-label">{{ row.label }}</span>
+          <span class="row-values">
+            <span class="good">{{ row.good }}</span>
+            <span class="sep">-</span>
+            <span class="bad">{{ row.bad }}</span>
+          </span>
+        </div>
+
+        <div
+          class="track"
+          [class.empty]="row.good + row.bad === 0"
+          role="img"
+          [attr.aria-label]="
+            row.label + ': ' + row.good + ' ' + row.goodLabel + ', ' + row.bad + ' ' + row.badLabel
+          "
+        >
+          <span class="fill" [style.width.%]="row.goodPct"></span>
+        </div>
+
+        <div class="row-foot">
+          <span>{{ row.goodLabel }} / {{ row.badLabel }}</span>
+          @if (row.sub) {
+            <span>{{ row.sub }}</span>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</section>

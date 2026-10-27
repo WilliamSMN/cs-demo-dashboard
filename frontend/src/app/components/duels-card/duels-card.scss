@@ -1,0 +1,102 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.card {
+  padding: 1.5rem;
+  background: #111722;
+  border: 1px solid #273244;
+  border-radius: 14px;
+}
+
+.card-head {
+  margin-bottom: 1.25rem;
+}
+
+.card-label {
+  color: #9ca3af;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.rows {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.row-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.row-label {
+  color: #e5e7eb;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.row-values {
+  display: flex;
+  gap: 0.4rem;
+  font-size: 1rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+
+  .good {
+    color: #a3e635;
+  }
+
+  .bad {
+    color: #fb923c;
+  }
+
+  .sep {
+    color: #6b7280;
+  }
+}
+
+// Fond orange (le "mauvais" côté), la partie verte se superpose à gauche
+.track {
+  height: 8px;
+  overflow: hidden;
+  background: #fb923c;
+  border-radius: 999px;
+
+  &.empty {
+    background: #273244;
+  }
+}
+
+.fill {
+  display: block;
+  height: 100%;
+  background: #a3e635;
+  border-radius: 999px;
+  transition: width 200ms ease;
+}
+
+.row-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  color: #9ca3af;
+  font-size: 0.75rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fill {
+    transition: none;
+  }
+}

@@ -1,0 +1,32 @@
+<section class="card">
+  <header class="card-head">
+    <span class="card-label">Weapons</span>
+  </header>
+
+  @if (rows().length === 0) {
+    <p class="empty">No weapon data.</p>
+  } @else {
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Weapon</th>
+            <th scope="col" class="num">Kills</th>
+            <th scope="col" class="num">HS</th>
+            <th scope="col" class="num">Damage</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of rows(); track $index) {
+            <tr [class.no-kills]="row.kills === 0">
+              <th scope="row">{{ row.name }}</th>
+              <td class="num">{{ row.kills }}</td>
+              <td class="num">{{ row.hs }}</td>
+              <td class="num">{{ row.damage }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

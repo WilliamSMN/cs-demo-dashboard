@@ -1,0 +1,63 @@
+<section class="card">
+  <header class="card-head">
+    <span class="card-label">Kills and deaths map</span>
+    <div class="seg" role="group" aria-label="Side filter">
+      @for (s of sides; track s.key) {
+        <button
+          type="button"
+          [class.active]="side() === s.key"
+          [attr.aria-pressed]="side() === s.key"
+          (click)="side.set(s.key)"
+        >
+          {{ s.label }}
+        </button>
+      }
+    </div>
+  </header>
+
+  <div class="map">
+    @if (radarUrl(); as url) {
+      @if (!imageFailed()) {
+        <img class="radar" [src]="url" alt="" (error)="imageFailed.set(true)" />
+      }
+    }
+    <svg
+      class="overlay"
+      [attr.viewBox]="'0 0 ' + positions().radar_size + ' ' + positions().radar_size"
+      role="img"
+      [attr.aria-label]="
+        'Kill and death positions on ' +
+        (positions().map_name ?? 'the map') +
+        ': ' +
+        counts().kills +
+        ' kills, ' +
+        counts().deaths +
+        ' deaths'
+      "
+    >
+      @for (p of points(); track $index) {
+        <g [attr.transform]="'translate(' + p.x + ' ' + p.y + ')'">
+          <title>{{ p.label }}</title>
+          @if (p.kind === 'kill') {
+            <circle class="kill" r="9" />
+          } @else {
+            <path class="death-outline" d="M-8 -8L8 8M8 -8L-8 8" />
+            <path class="death" d="M-8 -8L8 8M8 -8L-8 8" />
+          }
+        </g>
+      }
+    </svg>
+  </div>
+
+  @if (imageFailed()) {
+    <p class="notice">Radar image unavailable, positions are shown without the map.</p>
+  }
+  @if (points().length === 0) {
+    <p class="notice">No position data for this selection.</p>
+  }
+
+  <ul class="legend">
+    <li><span class="swatch kill"></span>Kills ({{ counts().kills }})</li>
+    <li><span class="death-legend">✕</span>Deaths ({{ counts().deaths }})</li>
+  </ul>
+</section>

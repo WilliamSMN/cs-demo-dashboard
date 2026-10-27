@@ -1,0 +1,54 @@
+<section class="card">
+  <header class="card-head">
+    <span class="card-label">Round impact</span>
+    <div class="seg" role="group" aria-label="Bar height metric">
+      <button
+        type="button"
+        [class.active]="metric() === 'damage'"
+        [attr.aria-pressed]="metric() === 'damage'"
+        (click)="metric.set('damage')"
+      >
+        Damage
+      </button>
+      <button
+        type="button"
+        [class.active]="metric() === 'kills'"
+        [attr.aria-pressed]="metric() === 'kills'"
+        (click)="metric.set('kills')"
+      >
+        Kills
+      </button>
+    </div>
+  </header>
+
+  @if (bars().length === 0) {
+    <p class="empty">No round data.</p>
+  } @else {
+    <div class="chart" role="list">
+      @for (bar of bars(); track bar.round) {
+        <div class="round" role="listitem" [attr.aria-label]="bar.label" [title]="bar.label">
+          <div class="bar-slot">
+            <div class="plot" [style.--h]="bar.height">
+              <div class="dots">
+                @for (dot of bar.dots; track dot) {
+                  <i class="dot"></i>
+                }
+              </div>
+              <div class="bar" [class.won]="bar.won"></div>
+            </div>
+          </div>
+          <span class="death" [class.alive]="!bar.died" aria-hidden="true">✕</span>
+          <span class="round-num">{{ bar.round }}</span>
+        </div>
+      }
+    </div>
+
+    <ul class="legend">
+      <li><span class="swatch won"></span>Round won</li>
+      <li><span class="swatch lost"></span>Round lost</li>
+      <li><span class="swatch kill"></span>Kill</li>
+      <li><span class="death-legend">✕</span>Death</li>
+      <li class="hint">Bar height = {{ metric() }}</li>
+    </ul>
+  }
+</section>

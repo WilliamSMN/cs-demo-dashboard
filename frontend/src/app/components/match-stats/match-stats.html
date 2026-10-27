@@ -151,7 +151,9 @@
       }
     }
     @case ('report') {
-      <p>Coming soon !</p>
+      <app-player-report
+        [matchId]="matchId()"
+      />
     }
   }
 } @else if (stats.error()) {

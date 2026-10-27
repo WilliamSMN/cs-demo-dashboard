@@ -1,0 +1,158 @@
+$count-space: 1.25rem; // place au-dessus de la barre la plus haute pour son nombre
+$plot-min: 120px; // hauteur minimale de la zone des barres
+
+:host {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.card {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 1.5rem;
+  background: #111722;
+  border: 1px solid #273244;
+  border-radius: 14px;
+}
+
+.card-head {
+  margin-bottom: 1.25rem;
+}
+
+.card-label {
+  color: #9ca3af;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+// Le graphique prend toute la hauteur restante : la légende reste en bas de la carte
+.chart {
+  display: flex;
+  flex: 1;
+  gap: 0.5rem;
+}
+
+.col {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.bars {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  min-height: calc(#{$count-space} + #{$plot-min});
+}
+
+// Sa hauteur sert de référence (100 %) aux barres ; le haut est réservé aux nombres
+.plot {
+  position: absolute;
+  inset: $count-space 0 0;
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+}
+
+.bar-wrap {
+  position: relative;
+  width: 14px;
+}
+
+.bar {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: calc(var(--h) * 1%);
+  border-radius: 4px 4px 0 0;
+  transition: height 200ms ease;
+
+  &.kill {
+    background: #a3e635;
+  }
+
+  &.death {
+    background: #fb923c;
+  }
+}
+
+// Le nombre est ancré juste au-dessus du haut de sa barre
+.count {
+  position: absolute;
+  bottom: calc(var(--h) * 1% + 2px);
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.7rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  transition: bottom 200ms ease;
+
+  &.kill-count {
+    color: #a3e635;
+  }
+
+  &.death-count {
+    color: #fb923c;
+  }
+}
+
+.bin-label {
+  color: #9ca3af;
+  font-size: 0.7rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.caption {
+  margin: 0.75rem 0 0;
+  color: #6b7280;
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  color: #9ca3af;
+  font-size: 0.75rem;
+  list-style: none;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+}
+
+.swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+
+  &.kill {
+    background: #a3e635;
+  }
+
+  &.death {
+    background: #fb923c;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar,
+  .count {
+    transition: none;
+  }
+}

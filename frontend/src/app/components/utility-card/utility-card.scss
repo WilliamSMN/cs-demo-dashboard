@@ -1,0 +1,83 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.card {
+  padding: 1.5rem;
+  background: #111722;
+  border: 1px solid #273244;
+  border-radius: 14px;
+}
+
+.card-head {
+  margin-bottom: 1.25rem;
+}
+
+.card-label {
+  color: #9ca3af;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.75rem;
+  margin: 0;
+}
+
+.stat {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.9rem 1rem;
+  background: #0d131d;
+  border: 1px solid #273244;
+  border-radius: 12px;
+
+  &.warn {
+    background: rgb(251 146 60 / 8%);
+    border-color: rgb(251 146 60 / 40%);
+
+    .stat-value {
+      color: #fb923c;
+    }
+  }
+}
+
+.stat-label {
+  color: #9ca3af;
+  font-size: 0.75rem;
+}
+
+.stat-value {
+  margin: 0;
+  color: #f3f4f6;
+  font-size: 1.4rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.15;
+}
+
+.stat-sub {
+  margin: 0;
+  color: #9ca3af;
+  font-size: 0.75rem;
+  overflow-wrap: anywhere;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  border: 0;
+  clip-path: inset(50%);
+}

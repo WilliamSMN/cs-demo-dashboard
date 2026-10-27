@@ -1,0 +1,40 @@
+<section class="card">
+  <header class="card-head">
+    <span class="card-label">Kill and death timing</span>
+  </header>
+
+  <div class="chart" role="list">
+    @for (bin of bins(); track bin.label) {
+      <div
+        class="col"
+        role="listitem"
+        [attr.aria-label]="bin.label + ' seconds: ' + bin.kills + ' kills, ' + bin.deaths + ' deaths'"
+      >
+        <div class="bars">
+          <div class="plot">
+            <div class="bar-wrap" [style.--h]="bin.killsPct">
+              @if (bin.kills > 0) {
+                <span class="count kill-count">{{ bin.kills }}</span>
+              }
+              <div class="bar kill"></div>
+            </div>
+            <div class="bar-wrap" [style.--h]="bin.deathsPct">
+              @if (bin.deaths > 0) {
+                <span class="count death-count">{{ bin.deaths }}</span>
+              }
+              <div class="bar death"></div>
+            </div>
+          </div>
+        </div>
+        <span class="bin-label">{{ bin.label }}</span>
+      </div>
+    }
+  </div>
+
+  <p class="caption">Seconds since the end of freeze time</p>
+
+  <ul class="legend">
+    <li><span class="swatch kill"></span>Kills ({{ totals().kills }})</li>
+    <li><span class="swatch death"></span>Deaths ({{ totals().deaths }})</li>
+  </ul>
+</section>
