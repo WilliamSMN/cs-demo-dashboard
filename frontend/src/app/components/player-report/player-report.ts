@@ -1,4 +1,4 @@
-import { Component, computed, input } from '@angular/core';
+import { booleanAttribute, Component, computed, input } from '@angular/core';
 import { ExtrasResponse, KillTimingResponse, OpeningDuelsResponse, PlayerReportSummary, PositionsResponse, ProfileResponse, RoundImpactResponse, WeaponsResponse } from '../../services/report-api';
 import { API_URL } from '../../config';
 import { httpResource } from '@angular/common/http';
@@ -20,10 +20,11 @@ import { OpponentsTable } from '../opponents-table/opponents-table';
   templateUrl: './player-report.html',
 })
 export class PlayerReport {
-  readonly matchId = input.required<string>();
+  readonly demo = input(false, { transform: booleanAttribute });
+  readonly matchId = input('');
 
   private report<T>(name: string) {
-    return httpResource<T>(() => `${API_URL}/matches/${this.matchId()}/report/${name}`);
+    return httpResource<T>(() => this.demo() ? `/demo/report/${name}.json` : `${API_URL}/matches/${this.matchId()}/report/${name}`);
   }
 
   protected readonly summary = this.report<PlayerReportSummary>('summary');

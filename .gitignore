@@ -34,7 +34,6 @@ __pycache__/
 .pytest_cache/
 .ipynb_checkpoints/
 
-# Données : ne jamais commiter les démos (très lourdes)
 data/demos/*
 !data/demos/.gitkeep
 data/matches/
@@ -44,3 +43,5 @@ data/matches/
 
 # OS
 Thumbs.db
+
+backend/assets/maps/

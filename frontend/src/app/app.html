@@ -8,10 +8,16 @@
     <div class="sidebar-label">WORKSPACE</div>
 
     <nav class="navigation">
-      <a class="nav-link active" routerLink="/home">
-        <span class="nav-icon">▦</span>
-        <span>My matches</span>
+      <a class="nav-link" routerLink="/home" routerLinkActive="active">
+        <span class="nav-icon">⌂</span>
+        <span>Home</span>
       </a>
+      @if(auth.isSignedIn()){
+        <a class="nav-link" routerLink="/matches" routerLinkActive="active">
+          <span class="nav-icon">▦</span>
+          <span>My matches</span>
+        </a>
+      }
     </nav>
 
     <div class="sidebar-bottom">

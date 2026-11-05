@@ -13,5 +13,5 @@ export const guestOnlyGuard: CanActivateFn = () => {
   const router = inject(Router);
   const auth = inject(Auth);
 
-  return !auth.isSignedIn() ? true : router.createUrlTree(['/matches']);
+  return auth.isSignedIn() ? true : router.createUrlTree(['/home']);
 };

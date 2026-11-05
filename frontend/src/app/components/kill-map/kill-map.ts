@@ -11,13 +11,14 @@ type SideFilter = 'all' | Side;
   templateUrl: './kill-map.html',
 })
 export class KillMap {
+  readonly radarOverride = input<string | null>(null);
   readonly positions = input.required<PositionsResponse>();
   protected readonly imageFailed = signal(false);
   protected readonly side = signal<SideFilter>('all');
 
   protected readonly radarUrl = computed(() => {
     const name = this.positions().map_name;
-    return name ? `${API_URL}/maps/${name}/radar` : null;
+    return this.radarOverride() ? this.radarOverride() :  name ? `${API_URL}/maps/${name}/radar` : null;
   });
 
   protected readonly sides: { key: SideFilter; label: string }[] = [

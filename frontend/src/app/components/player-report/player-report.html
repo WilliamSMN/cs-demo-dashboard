@@ -10,7 +10,7 @@
     </section>
 
     <section class="row row-map">
-      <app-kill-map [positions]="positions.value()!" />
+      <app-kill-map [positions]="positions.value()!" [radarOverride]="demo() ? '/demo/radar.png' : null" />
       <div class="stack">
         @if (opening.hasValue() && extras.hasValue()) {
           <app-duels-card [duels]="opening.value()!.duels" [extras]="extras.value()!" />

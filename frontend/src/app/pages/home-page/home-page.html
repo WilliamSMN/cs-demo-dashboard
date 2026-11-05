@@ -1,0 +1,55 @@
+<section class="hero">
+  <p class="kicker">CS2 demo analytics</p>
+  <h1>Understand every round you play</h1>
+  <p class="lead">
+    Upload a CS2 demo and get a full report on your game: impact per round, duels, utility,
+    weapons, and a map of where you win and lose fights.
+  </p>
+
+  <div class="actions">
+    @if (auth.isSignedIn()) {
+      <a class="cta primary" routerLink="/matches">Open my matches</a>
+    } @else {
+      <a class="cta primary" [href]="auth.loginUrl">Sign in with Steam</a>
+    }
+    <button type="button" class="cta secondary" (click)="scrollToDemo()">
+      See a live preview
+    </button>
+  </div>
+
+  @if (auth.authState().kind === 'error') {
+    <p class="notice" role="status">
+      The analysis server is unreachable right now. The live preview below still works.
+    </p>
+  }
+</section>
+
+<section class="how" aria-labelledby="how-title">
+  <h2 id="how-title">How it works</h2>
+  <ol class="steps">
+    @for (step of steps; track step.title) {
+      <li class="step">
+        <span class="step-num" aria-hidden="true">{{ $index + 1 }}</span>
+        <h3>{{ step.title }}</h3>
+        <p>{{ step.text }}</p>
+      </li>
+    }
+  </ol>
+</section>
+
+<section class="demo" id="demo" aria-labelledby="demo-title">
+  <div class="section-head">
+    <h2 id="demo-title">Live preview</h2>
+    <span class="badge">Sample match, anonymized players</span>
+  </div>
+  <app-player-report demo />
+</section>
+
+<section class="closing">
+  <h2>Ready to analyze your own matches?</h2>
+  @if (auth.isSignedIn()) {
+    <a class="cta primary" routerLink="/matches">Open my matches</a>
+  } @else {
+    <a class="cta primary" [href]="auth.loginUrl">Sign in with Steam</a>
+  }
+</section>

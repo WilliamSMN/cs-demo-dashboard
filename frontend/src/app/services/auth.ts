@@ -11,7 +11,7 @@ type AuthState =
   | { kind: 'signedIn'; steamid: string };
 
 @Injectable({
-  providedIn: 'root', // 👈 Indispensable pour que le service soit singleton et injectable partout
+  providedIn: 'root',
 })
 export class Auth {
   private readonly http = inject(HttpClient);
